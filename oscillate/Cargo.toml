@@ -1,0 +1,17 @@
+[package]
+name = "oscillate"
+version = "0.1.0"
+authors = ["Flavio B. <barinas.flavio@gmail.com>"]
+edition = "2018"
+
+[lib]
+name = "oscillate"
+path = "src/lib/mod.rs"
+
+[[bin]]
+name = "oscillate"
+path = "src/main.rs"
+
+[dependencies]
+parser = { path = "../parser" }
+# libloading = "0.5"
