@@ -5,7 +5,7 @@ use crate::parse::Parse;
 use crate::expression::Identifier;
 use crate::expression::Expression;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Assign {
     name: Identifier,
     value: Box<Expression>
@@ -32,9 +32,10 @@ impl Parse for Assign {
 
         // get exp
         let value = Expression::parse(lexer)?;
+        println!("{:?}",lexer.curr());
         
         // check for semicolon and read
-        Self::expect_semicolon(lexer)?;
+        Self::on_semicolon(lexer)?;
 
         Ok(Assign::new(name,value))
     }

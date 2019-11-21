@@ -14,8 +14,9 @@ use crate::Parse;
 use crate::Lexer;
 use crate::Result;
 use crate::TokenType;
+use crate::error::ParseError;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Statement {
     Define(Define),
     Set(Set),
@@ -25,6 +26,23 @@ pub enum Statement {
 }
 
 impl Statement {
+
+    pub fn parse_block(lexer: &mut Lexer) -> Result<Vec<Self>> {
+        let mut block = Vec::new();
+        Self::expect_curr(lexer, TokenType::OpenCurlyBracket, ParseError::ExpectedOpenCurlyBracket)?;
+        loop {
+            let tok = lexer.next().token_type.clone();
+            let stmt = match tok {
+                TokenType::Use => Self::parse_use(lexer)?,
+                TokenType::Set => Self::parse_set(lexer)?,
+                TokenType::Define => Self::parse_define(lexer)?,
+                TokenType::CloseCurlyBracket => break,
+                _ => Self::parse_expression(lexer)?
+            };
+            block.push(stmt);
+        }
+        Ok(block)
+    }
 
     fn parse_define(lexer: &mut Lexer) -> Result<Self> {
         let define = Define::parse(lexer)?;

@@ -9,7 +9,7 @@ use crate::parse::Parse;
 use crate::expression::Expression;
 use crate::expression::Identifier;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Define {
     name: Identifier,
     body: Vec<Expression>

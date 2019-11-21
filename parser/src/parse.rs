@@ -33,4 +33,13 @@ pub trait Parse: Sized {
             Err(ParseError::ExpectedSemicolon)
         }
     }
+
+    fn on_semicolon(lexer: &mut Lexer) -> Result<()> {
+        let token = lexer.curr();
+        if token.token_type == TokenType::Semicolon {
+            Ok(())
+        } else {
+            Err(ParseError::ExpectedSemicolon)
+        }
+    }
 }

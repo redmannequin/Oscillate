@@ -13,6 +13,9 @@ pub type Result<T> = result::Result<T, ParseError>;
 pub enum ParseError {
     ExpectedIdentifier,
     ExpectedSemicolon,
+    ExpectedBool,
+    ExpectedPrefix,
+    ExpectedInfix,
 
     ExpectedOpenRoundBracket,
     ExpectedCloseRoundBracket,
@@ -35,6 +38,9 @@ impl Error for ParseError {
             ParseError::ExpectedSemicolon => "Expected Semicolon",
             ParseError::InvalidSoruce => "Invalid Soruce",
             ParseError::ExpectedExpression => "Expected Expression",
+            ParseError::ExpectedBool => "Expected Bool",
+            ParseError::ExpectedPrefix => "Expected Prefix",
+            ParseError::ExpectedInfix => "Expected Infix",
 
             ParseError::ExpectedOpenRoundBracket => "Expected Open Round Bracket",
             ParseError::ExpectedCloseRoundBracket => "Expected Close Round Bracket",

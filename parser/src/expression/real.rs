@@ -5,7 +5,7 @@ use crate::parse::Parse;
 
 use crate::error::ParseError;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Real {
     number: f64
 }
@@ -17,16 +17,11 @@ impl Real {
 
 impl Parse for Real {
     fn parse(lexer: &mut Lexer) -> Result<Self> {
-        let tok = lexer.curr(); 
-        let number = match &tok.token_type {
+        let tok = &lexer.curr().token_type; 
+        let number = match tok {
             TokenType::Number(number) => number.parse()?,
             _ => return Err(ParseError::ExpectedIdentifier)
         };
-
-        let tok = lexer.peek();
-        if tok.token_type == TokenType::Semicolon {
-            lexer.next();
-        }
 
         Ok(Real::new(number))
     }

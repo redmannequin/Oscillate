@@ -6,7 +6,7 @@ use crate::error::ParseError;
 
 use crate::parse::Parse;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Identifier {
     name: String
 }
@@ -18,8 +18,8 @@ impl Identifier {
 
 impl Parse for Identifier {
     fn parse(lexer: &mut Lexer) -> Result<Self> {
-        let tok = lexer.curr(); 
-        let name = match &tok.token_type {
+        let tok = &lexer.curr().token_type; 
+        let name = match tok {
             TokenType::Identifier(name) => name.clone(),
             _ => return Err(ParseError::ExpectedIdentifier)
         };

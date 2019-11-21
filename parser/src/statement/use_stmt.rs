@@ -6,7 +6,7 @@ use crate::error::ParseError;
 
 use crate::parse::Parse;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Use {}
 
 impl Use {
