@@ -1,2 +1,3 @@
 # Oscillate
-Digital Audio Interpreter writting in rust
+A scripting language for audio production built it rust. 
+With a focus on simplicity and extendability.

@@ -1,6 +1,7 @@
 use std::result;
 use std::error::Error;
 use std::fmt;
+use std::num::ParseFloatError;
 
 /// Result for the monkey parser `Error`
 pub type Result<T> = result::Result<T, ParseError>;
@@ -12,8 +13,16 @@ pub type Result<T> = result::Result<T, ParseError>;
 pub enum ParseError {
     ExpectedIdentifier,
     ExpectedSemicolon,
-    
+
+    ExpectedOpenRoundBracket,
+    ExpectedCloseRoundBracket,
+
+    ExpectedOpenCurlyBracket,
+    ExpectedCloseCurlyBracket,
+
     ExpectedExpression,
+
+    ParseReal,
 
     InvalidSoruce,
     
@@ -25,18 +34,27 @@ impl Error for ParseError {
             ParseError::ExpectedIdentifier => "Expected Identifier",
             ParseError::ExpectedSemicolon => "Expected Semicolon",
             ParseError::InvalidSoruce => "Invalid Soruce",
-            ParseError::ExpectedExpression => "Expected Expression"
+            ParseError::ExpectedExpression => "Expected Expression",
+
+            ParseError::ExpectedOpenRoundBracket => "Expected Open Round Bracket",
+            ParseError::ExpectedCloseRoundBracket => "Expected Close Round Bracket",
+            
+            ParseError::ExpectedOpenCurlyBracket => "Expected Open Curly Bracket",
+            ParseError::ExpectedCloseCurlyBracket => "Expected Close Curly Bracket",
+
+            ParseError::ParseReal => "Faild to parse Real"
         }
     }
 }
 
 impl fmt::Display for ParseError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match *self {
-            ParseError::ExpectedIdentifier => write!(f, "Expected Identifier"),
-            ParseError::ExpectedSemicolon => write!(f, "Expected Semicolon"),
-            ParseError::InvalidSoruce => write!(f, "Invalid Soruce"),
-            ParseError::ExpectedExpression => write!(f, "Expected Expression")
-        }
+        write!(f, "{}", self.description())
+    }
+}
+
+impl From<ParseFloatError> for ParseError {
+    fn from(_err: ParseFloatError) -> ParseError {
+        ParseError::ParseReal
     }
 }

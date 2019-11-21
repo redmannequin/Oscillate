@@ -6,8 +6,8 @@ pub enum TokenType {
 
     // Identifier + lLterals 
     Identifier(String),
-    Integer(String),
-    Float(String),
+    Number(String),
+    String(String),
 
     // Operators
     Assing,
@@ -46,7 +46,8 @@ pub enum TokenType {
 
     // Keywords
     Function,
-    Let,
+    Define,
+
     True,
     False,
     If,
@@ -54,10 +55,7 @@ pub enum TokenType {
     Return,
 
     Use,
-
-    Start,
-    Stop,
-    Exit
+    Set
 }
 
 #[derive(Debug, Clone)]

@@ -16,16 +16,16 @@ pub fn start() -> Result<()> {
         
         let lexer = Lexer::new(input.as_str());
         let mut parser = Parser::new(lexer);
-        let program = parser.parse_program()?;
+        let program = parser.parse()?;
 
-        let errors = parser.clear_errors();
-        if errors.len() > 0 {
-            println!("parser errors:");
-            for error in errors {
-                println!("  {:?}", error);
-            }
-            continue;
-        }
+        // let errors = parser.clear_errors();
+        // if errors.len() > 0 {
+        //     println!("parser errors:");
+        //     for error in errors {
+        //         println!("  {:?}", error);
+        //     }
+        //     continue;
+        // }
 
         println!("{:?}", program);
     }

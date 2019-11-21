@@ -4,8 +4,12 @@ use super::TokenType;
 pub struct Lexer {
     source: String,
     curr_line: u32,
+
     curr_ch: Option<char>,
     peek_ch: Option<char>,
+
+    curr_tok: Token,
+    peek_tok: Token 
 }
 
 impl Lexer {
@@ -14,11 +18,30 @@ impl Lexer {
         let mut lex = Lexer {
             source: String::from(source),
             curr_line: 1,
+
             curr_ch: None,
-            peek_ch: None
+            peek_ch: None,
+
+            curr_tok: Token::new(TokenType::Illegal, 0),
+            peek_tok: Token::new(TokenType::Illegal, 0),
         };
         lex.next_char();
+        lex.next();
         lex
+    }
+
+    pub fn next(&mut self) -> &Token {
+        self.curr_tok = self.peek_tok.clone();
+        self.peek_tok = self.next_token();
+        &self.curr_tok
+    }
+
+    pub fn peek(&self) -> &Token {
+        &self.peek_tok
+    }
+
+    pub fn curr(&self) -> &Token {
+        &self.curr_tok
     }
 
     fn next_char(&mut self) -> Option<char> {
@@ -32,7 +55,7 @@ impl Lexer {
         self.curr_ch
     }
 
-    pub fn next_token(&mut self) -> Token {
+    fn next_token(&mut self) -> Token {
         self.skip_whitespace();
         let token = match self.next_char() {
             // Operators
@@ -112,19 +135,17 @@ impl Lexer {
         }
 
         match identifier.as_str() {
-            "let" => self.create_token(TokenType::Let),
+            "define" => self.create_token(TokenType::Define),
             "fn" => self.create_token(TokenType::Function),
+
             "true" => self.create_token(TokenType::True),
             "false" => self.create_token(TokenType::False),
+            
             "if" => self.create_token(TokenType::If),
             "else" => self.create_token(TokenType::Else),
             "return" => self.create_token(TokenType::Return),
 
             "use" => self.create_token(TokenType::Use),
-
-            "start" => self.create_token(TokenType::Start),
-            "stop" => self.create_token(TokenType::Stop),
-            "exit" => self.create_token(TokenType::Exit),
 
             _ => self.create_token(TokenType::Identifier(identifier))
         }
@@ -147,27 +168,11 @@ impl Lexer {
                 break;
             }
         }
-
-        match is_float {
-            true => self.create_token(TokenType::Float(number)),
-            false => self.create_token(TokenType::Integer(number))
-        }
-        
+        self.create_token(TokenType::Number(number))
     }
 
     fn create_token(&self, token_type: TokenType) -> Token {
         Token::new(token_type, self.curr_line)
     }
-}
-
-impl Iterator for Lexer {
-    type Item = Token; 
     
-    fn next(&mut self) -> Option<Self::Item> {
-        let token = self.next_token();
-        match token.token_type {
-            TokenType::EOF => None,
-            _ => Some(token)
-        }
-    }
 }
