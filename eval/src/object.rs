@@ -8,6 +8,5 @@ use parser::statement::Statement;
 pub enum Object {
     Bool(bool),
     Real(f64),
-    Function(Vec<String>, Vec<Statement>, Rc<RefCell<Environment>>),
     Null
 }
