@@ -17,10 +17,10 @@ impl Real {
 
 impl Parse for Real {
     fn parse(lexer: &mut Lexer) -> Result<Self> {
-        let tok = &lexer.curr().token_type; 
-        let number = match tok {
+        let tok = lexer.curr(); 
+        let number = match &tok.token_type {
             TokenType::Number(number) => number.parse()?,
-            _ => return Err(ParseError::ExpectedIdentifier)
+            _ => return Err(ParseError::ExpectedIdentifier(tok.clone()))
         };
 
         Ok(Real::new(number))

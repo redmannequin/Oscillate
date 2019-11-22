@@ -25,10 +25,12 @@ pub use if_exp::If;
 mod infix;
 pub use infix::Infix;
 pub use infix::InfixType;
+pub use infix::InfixEnum;
 pub use infix::Precedence;
 
 mod prefix;
 pub use prefix::Prefix;
+pub use prefix::PrefixType;
 
 mod real;
 pub use real::Real;
@@ -45,6 +47,7 @@ pub enum Expression {
 }
 
 impl Expression {
+
     fn parse_identifier(lexer: &mut Lexer) -> Result<Self> {
         let ident = Identifier::parse(lexer)?;
         let exp = Expression::Identifier(ident);
@@ -82,8 +85,8 @@ impl Expression {
     }
 
     fn parse_left_exp(lexer: &mut Lexer) -> Result<Self> {
-        let tok = lexer.curr().token_type.clone();
-        let left_exp = match tok {
+        let tok = lexer.curr();
+        let left_exp = match tok.token_type {
             TokenType::Identifier(_) => match lexer.peek().token_type.clone() {
                 TokenType::Colon => Self::parse_assign(lexer)?,
                 _ => Self::parse_identifier(lexer)?
@@ -94,39 +97,24 @@ impl Expression {
             TokenType::If => Self::parse_if(lexer)?,
             TokenType::Not => Self::parse_prefix(lexer)?,
             TokenType::Minus => Self::parse_prefix(lexer)?,
-            _ => return Err(ParseError::InvalidSoruce)
+            _ => return Err(ParseError::ExpectedExpression(tok.clone()))
         };
         Ok(left_exp)
-    }
-
-    fn is_infix(tok: &TokenType) -> bool {
-        match tok {
-            TokenType::Equal => true,
-            TokenType::NotEqual => true,
-            TokenType::LessThan => true,
-            TokenType::GraterThan => true,
-            TokenType::Plus => true,
-            TokenType::Minus => true,
-            TokenType::Star => true,
-            TokenType::Divide => true,
-            _ => false
-        }
     }
 
     fn parse_exp(lexer: &mut Lexer, precedence: Precedence) -> Result<Self> {
         let mut left_exp = Self::parse_left_exp(lexer)?;
 
         loop {
-            let tok = &lexer.peek().token_type;
-            if !Self::is_infix(tok) { break; }
-            lexer.next();
-            let infix = match InfixType::parse(lexer) {
-                Ok(infix) => infix,
+            
+            let tok = lexer.peek();
+            match Infix::precedence(tok) {
+                Ok(prec) => if precedence > prec { break; },
                 Err(_) => break
-            };
-
+            }
             lexer.next();
-            if infix.1 < precedence { break; }
+            let infix = InfixType::parse(lexer)?;
+            lexer.next();
             let right_exp = Self::parse_exp(lexer, infix.1)?;
             left_exp = Expression::Infix(Infix::new(infix, left_exp, right_exp));
         }
@@ -138,6 +126,7 @@ impl Expression {
 
         Ok(left_exp)
     }
+
 }
 
 impl Parse for Expression {

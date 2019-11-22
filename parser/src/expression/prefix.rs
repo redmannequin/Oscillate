@@ -14,8 +14,8 @@ pub enum PrefixType {
 
 #[derive(Debug, Clone)]
 pub struct Prefix {
-    prefix: PrefixType,
-    expression: Box<Expression>
+    pub prefix: PrefixType,
+    pub expression: Box<Expression>
 }
 
 impl Prefix {
@@ -30,11 +30,11 @@ impl Prefix {
 
 impl Parse for Prefix {
     fn parse(lexer: &mut Lexer) -> Result<Self> {
-        let tok = &lexer.curr().token_type;
-        let prefix_type = match tok {
+        let tok = lexer.curr();
+        let prefix_type = match tok.token_type {
             TokenType::Minus => PrefixType::Minus,
             TokenType::Not => PrefixType::Not,
-            _ => return Err(ParseError::ExpectedPrefix)
+            _ => return Err(ParseError::ExpectedPrefix(tok.clone()))
         };
         lexer.next();
         let exp = Expression::parse(lexer)?;

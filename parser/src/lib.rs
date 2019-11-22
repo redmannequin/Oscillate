@@ -13,9 +13,12 @@ pub mod error;
 pub use error::Result;
 
 pub mod expression;
-pub mod statement;
+pub use expression::Expression;
 
-use statement::Statement;
+pub mod statement;
+pub use statement::Statement;
+
+pub type Program = Vec<Statement>;
 
 pub struct Parser {
     lexer: Lexer
@@ -28,8 +31,8 @@ impl Parser {
         }
     }
 
-    pub fn parse(&mut self) -> Result<Vec<Statement>> {
-        let mut program = Vec::new();
+    pub fn parse(&mut self) -> Result<Program> {
+        let mut program = Program::new();
         loop {
             let tok = self.lexer.next().token_type.clone();
             let stmt = match tok {

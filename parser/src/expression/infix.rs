@@ -2,6 +2,7 @@ use crate::Lexer;
 use crate::Result;
 use crate::parse::Parse;
 use crate::error::ParseError;
+use crate::Token;
 use crate::TokenType;
 
 use crate::expression::Expression;
@@ -32,8 +33,8 @@ pub type InfixType = (Option<InfixEnum>, Precedence);
 
 impl Parse for InfixType {
     fn parse(lexer: &mut Lexer) -> Result<Self> {
-        let tok = &lexer.curr().token_type;
-        let infix = match tok {
+        let tok = lexer.curr();
+        let infix = match tok.token_type {
             TokenType::Equal => (Some(InfixEnum::Equal), Precedence::Equals),
             TokenType::NotEqual => (Some(InfixEnum::NotEqual), Precedence::Equals),
             TokenType::LessThan => (Some(InfixEnum::LessThan), Precedence::LessGreater),
@@ -42,7 +43,7 @@ impl Parse for InfixType {
             TokenType::Minus => (Some(InfixEnum::Minus), Precedence::Sum),
             TokenType::Star => (Some(InfixEnum::Star), Precedence::Product),
             TokenType::Divide => (Some(InfixEnum::Divide), Precedence::Product),
-            _ => return Err(ParseError::ExpectedInfix)
+            _ => return Err(ParseError::ExpectedInfix(tok.clone()))
         };
         Ok(infix)
     }
@@ -50,9 +51,9 @@ impl Parse for InfixType {
 
 #[derive(Debug, Clone)]
 pub struct Infix {
-    infix: InfixType,
-    left_exp: Box<Expression>,
-    right_exp: Box<Expression>
+    pub infix: InfixType,
+    pub left_exp: Box<Expression>,
+    pub right_exp: Box<Expression>
 }
 
 impl Infix {
@@ -64,5 +65,19 @@ impl Infix {
             left_exp,
             right_exp
         }
+    }
+
+    pub fn precedence(tok: &Token) -> Result<Precedence> {
+        Ok(match tok.token_type {
+            TokenType::Equal => Precedence::Equals,
+            TokenType::NotEqual => Precedence::Equals,
+            TokenType::LessThan => Precedence::LessGreater,
+            TokenType::GraterThan => Precedence::LessGreater,
+            TokenType::Plus => Precedence::Sum,
+            TokenType::Minus => Precedence::Sum,
+            TokenType::Star => Precedence::Product,
+            TokenType::Divide => Precedence::Product,
+            _ => return Err(ParseError::ExpectedInfix(tok.clone()))
+        })
     }
 }

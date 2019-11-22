@@ -2,12 +2,19 @@ use std::io::{self, Write};
 use parser::Lexer;
 use parser::Parser;
 
-use crate::error::Result;
+use std::rc::Rc;
+use std::cell::RefCell;
 
-pub fn start() -> Result<()> {
+use eval::run;
+use eval::Environment;
+
+pub fn start() {
     let stdin = io::stdin();
     let mut stdout = io::stdout();
     let mut input = String::new();
+
+    let env = Rc::new(RefCell::new(Environment::new()));
+
     loop {
         input.clear();
         print!(">> ");
@@ -16,17 +23,12 @@ pub fn start() -> Result<()> {
         
         let lexer = Lexer::new(input.as_str());
         let mut parser = Parser::new(lexer);
-        let program = parser.parse()?;
+        let program = parser.parse().unwrap();
 
-        // let errors = parser.clear_errors();
-        // if errors.len() > 0 {
-        //     println!("parser errors:");
-        //     for error in errors {
-        //         println!("  {:?}", error);
-        //     }
-        //     continue;
-        // }
-
-        println!("{:?}", program);
+        match run(&program, Rc::clone(&env)) {
+            Ok(obj) => println!("{:?}", obj),
+            Err(err) => println!("Error: {:?}", err)
+        }
+        
     }
 }

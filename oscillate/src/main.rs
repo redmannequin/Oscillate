@@ -1,5 +1,5 @@
-use ::oscillate;
+mod repl;
 
 fn main() {
-    oscillate::start().expect("Ops");
+    repl::start();
 }

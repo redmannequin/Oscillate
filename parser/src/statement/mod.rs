@@ -21,7 +21,6 @@ pub enum Statement {
     Define(Define),
     Set(Set),
     Use(Use),
-
     Expression(Expression),
 }
 
@@ -29,7 +28,8 @@ impl Statement {
 
     pub fn parse_block(lexer: &mut Lexer) -> Result<Vec<Self>> {
         let mut block = Vec::new();
-        Self::expect_curr(lexer, TokenType::OpenCurlyBracket, ParseError::ExpectedOpenCurlyBracket)?;
+        let tok = lexer.curr().clone();
+        Self::expect_curr(lexer, TokenType::OpenCurlyBracket, ParseError::ExpectedOpenCurlyBracket(tok))?;
         loop {
             let tok = lexer.next().token_type.clone();
             let stmt = match tok {

@@ -26,20 +26,20 @@ pub trait Parse: Sized {
     }
 
     fn expect_semicolon(lexer: &mut Lexer) -> Result<()> {
-        let token = lexer.next();
-        if token.token_type == TokenType::Semicolon {
+        let tok = lexer.next();
+        if tok.token_type == TokenType::Semicolon {
             Ok(())
         } else {
-            Err(ParseError::ExpectedSemicolon)
+            Err(ParseError::ExpectedSemicolon(tok.clone()))
         }
     }
 
     fn on_semicolon(lexer: &mut Lexer) -> Result<()> {
-        let token = lexer.curr();
-        if token.token_type == TokenType::Semicolon {
+        let tok = lexer.curr();
+        if tok.token_type == TokenType::Semicolon {
             Ok(())
         } else {
-            Err(ParseError::ExpectedSemicolon)
+            Err(ParseError::ExpectedSemicolon(tok.clone()))
         }
     }
 }

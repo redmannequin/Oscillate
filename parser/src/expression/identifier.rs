@@ -8,7 +8,7 @@ use crate::parse::Parse;
 
 #[derive(Debug, Clone)]
 pub struct Identifier {
-    name: String
+    pub name: String
 }
 
 impl Identifier {
@@ -18,10 +18,10 @@ impl Identifier {
 
 impl Parse for Identifier {
     fn parse(lexer: &mut Lexer) -> Result<Self> {
-        let tok = &lexer.curr().token_type; 
-        let name = match tok {
+        let tok = lexer.curr(); 
+        let name = match &tok.token_type {
             TokenType::Identifier(name) => name.clone(),
-            _ => return Err(ParseError::ExpectedIdentifier)
+            _ => return Err(ParseError::ExpectedIdentifier(tok.clone()))
         };
         Ok(Identifier::new(name))
     }

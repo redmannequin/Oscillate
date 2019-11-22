@@ -29,7 +29,8 @@ impl Parse for Define {
     fn parse(lexer: &mut Lexer) -> Result<Self> {
         lexer.next();
         let name = Identifier::parse(lexer)?;
-        Self::expect_peek(lexer, TokenType::OpenCurlyBracket, ParseError::ExpectedOpenCurlyBracket)?;
+        let tok = lexer.peek().clone();
+        Self::expect_peek(lexer, TokenType::OpenCurlyBracket, ParseError::ExpectedOpenCurlyBracket(tok))?;
 
         let mut body = Vec::new();
         loop {

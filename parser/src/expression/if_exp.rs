@@ -39,7 +39,8 @@ impl Parse for If {
 
         lexer.next();
         let exp = Expression::parse(lexer)?;
-        Self::expect_peek(lexer, TokenType::OpenCurlyBracket, ParseError::ExpectedOpenCurlyBracket)?;
+        let tok = lexer.peek().clone();
+        Self::expect_peek(lexer, TokenType::OpenCurlyBracket, ParseError::ExpectedOpenCurlyBracket(tok))?;
         let stmt = Statement::parse_block(lexer)?;
         cond_blocks.push((Box::new(exp),stmt));
 
@@ -51,7 +52,8 @@ impl Parse for If {
                 TokenType::If => {
                     lexer.next();
                     let exp = Expression::parse(lexer)?;
-                    Self::expect_peek(lexer, TokenType::OpenCurlyBracket, ParseError::ExpectedOpenCurlyBracket)?;
+                    let tok = lexer.peek().clone();
+                    Self::expect_peek(lexer, TokenType::OpenCurlyBracket, ParseError::ExpectedOpenCurlyBracket(tok))?;
                     let stmt = Statement::parse_block(lexer)?;
                     cond_blocks.push((Box::new(exp),stmt));
                 },
@@ -59,7 +61,7 @@ impl Parse for If {
                     let stmt = Statement::parse_block(lexer)?;
                     otherwise = Some(stmt)
                 }
-                _ => return Err(ParseError::ExpectedSemicolon)
+                _ => return Err(ParseError::ExpectedSemicolon(tok.clone()))
             }
         }
 
