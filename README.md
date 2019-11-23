@@ -83,7 +83,7 @@ define Buffer {
 define SizedFIFO {
     sig: INPUT,
     size: INPUT;
-    data: Buffer { size };
+    data: Buffer { size; };
 
     fn push(value) { 
       if data.count == size { 
@@ -135,19 +135,19 @@ define SoundA {
         }
 
         a2: Delay { 
-            in: a1, 
-            time: 0.5 
+            in: a1;
+            time: 0.5; 
         }
 
-        OUPUT { a2 }
+        OUPUT { a2; }
     }
 
     RUN {
         t += 1;
     }
 
-    OUTPUT_CH_1 { a }
-    OUTPUT_CH_2 { a }
+    OUTPUT_CH_1 { a; }
+    OUTPUT_CH_2 { a; }
 }
 ```
 
