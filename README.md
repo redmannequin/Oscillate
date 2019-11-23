@@ -53,26 +53,29 @@ define Buffer {
   start: 0;
 
   fn push(x) {
-    if (count == size) {
-      new_data: [size*2];
-      new_data.copy(data);
-      data: new_data;
+    if (self.count == self.size) {
+      new_data: [self.size*2];
+      while x: self.pop() {
+        new_data.push(x);
+      }
+      self.size: size*2;
+      self.data: new_data;
     }
-    count += 1;
-    data[count] = x;
+    self.count: self.count + 1;
+    self.data[self.count] = x;
   }
 
   fn pop() {
-    if count == 0 { return; }
-    data: data[(start+count)%size];
-    count--;
+    if self.count == 0 { return; }
+    data: self.data[(self.start+self.count)%self.size];
+    self.count: self.count-1;
     return data;
   }
 
   fn remove(index) {
     if index == 0 {
-      data: data[start];
-      start = (start+1)%size;
+      data: self.data[self.start];
+      self.start: (self.start+1)%self.size;
       return data;
     } else {
       unimplemented;
@@ -86,15 +89,15 @@ define SizedFIFO {
     data: Buffer { size; };
 
     fn push(value) { 
-      if data.count == size { 
-        data.remove(0);
+      if self.data.count == self.size { 
+        self.data.remove(0);
       }
-      data.push(value); 
+      self.data.push(value); 
     }
 
     INIT { self.push(sig); }
     RUN { self.push(sig); }
-    OUTPUT { data.remove(0); }
+    OUTPUT { self.data.remove(0); }
 }
 
 define Sin {
@@ -103,7 +106,7 @@ define Sin {
     phase: INPUT::Default(0);
     vol: INPUT::Default(0);
 
-    OUTPUT { vol*sin(2*PI*freq*t); }
+    OUTPUT { self.vol*self.sin(2*PI*self.freq*self.t); }
 }
 
 define Delay {
@@ -113,12 +116,12 @@ define Delay {
     
     INIT { 
       for i in 0..(time) {
-        buf.push(0);
+        self.buf.push(0);
       }
-      buf.push(sig);
+      self.buf.push(self.sig);
     }
     
-    OUTPUT { buf; }
+    OUTPUT { self.buf; }
     
 }
 
@@ -128,8 +131,8 @@ define SoundA {
 
     a: {
         a1: Sin {
-            t: t;
-            freq: note;
+            t: self.t;
+            freq: self.note;
             phase: 0;
             vol: 0;
         }
@@ -143,11 +146,11 @@ define SoundA {
     }
 
     RUN {
-        t += 1;
+        self.t: self.t + 1;
     }
 
-    OUTPUT_CH_1 { a; }
-    OUTPUT_CH_2 { a; }
+    OUTPUT_CH_1 { self.a; }
+    OUTPUT_CH_2 { self.a; }
 }
 ```
 
