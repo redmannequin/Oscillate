@@ -4,7 +4,7 @@ use crate::TokenType;
 use crate::Result;
 use crate::error::ParseError;
 
-use crate::parse::Parse;
+use crate::traits::Parse;
 
 use crate::expression::Expression;
 use crate::expression::Identifier;

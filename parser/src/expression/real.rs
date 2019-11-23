@@ -1,18 +1,22 @@
 use crate::Lexer;
 use crate::TokenType;
-use crate::Result;
-use crate::parse::Parse;
+use crate::Object;
 
+use crate::traits::Parse;
+use crate::traits::Eval;
+use crate::traits::Environment;
+use crate::traits::Container;
+
+use crate::Result;
 use crate::error::ParseError;
 
 #[derive(Debug, Clone)]
 pub struct Real {
-    number: f64
+    pub number: f64
 }
 
 impl Real {
     pub fn new(number: f64) -> Self { Self { number } }
-    pub fn get_number(&self) -> f64 { self.number }
 }
 
 impl Parse for Real {
@@ -24,5 +28,12 @@ impl Parse for Real {
         };
 
         Ok(Real::new(number))
+    }
+}
+
+impl Eval for Real {
+    fn eval(&self, _env: Container<impl Environment>) -> Result<Object> {
+        let obj = Object::Real(self.number);
+        Ok(obj)
     }
 }

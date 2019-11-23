@@ -1,19 +1,18 @@
-use std::io::{self, Write};
+use std::io;
+use std::io::Write;
+
 use parser::Lexer;
 use parser::Parser;
-
-use std::rc::Rc;
-use std::cell::RefCell;
-
-use eval::run;
-use eval::Environment;
+use parser::eval;
+use parser::Env;
+use parser::traits::Container;
 
 pub fn start() {
     let stdin = io::stdin();
     let mut stdout = io::stdout();
     let mut input = String::new();
 
-    let env = Rc::new(RefCell::new(Environment::new()));
+    let env = Container::new(Env::new());
 
     loop {
         input.clear();
@@ -25,7 +24,7 @@ pub fn start() {
         let mut parser = Parser::new(lexer);
         let program = parser.parse().unwrap();
 
-        match run(&program, Rc::clone(&env)) {
+        match eval(&program, env.clone()) {
             Ok(obj) => println!("{:?}", obj),
             Err(err) => println!("Error: {:?}", err)
         }

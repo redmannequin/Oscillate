@@ -1,10 +1,14 @@
 use crate::Lexer;
 use crate::TokenType;
+use crate::Object;
+
+use crate::traits::Parse;
+use crate::traits::Eval;
+use crate::traits::Environment;
+use crate::traits::Container;
 
 use crate::Result;
 use crate::error::ParseError;
-
-use crate::parse::Parse;
 
 #[derive(Debug, Clone)]
 pub struct Identifier {
@@ -24,5 +28,14 @@ impl Parse for Identifier {
             _ => return Err(ParseError::ExpectedIdentifier(tok.clone()))
         };
         Ok(Identifier::new(name))
+    }
+}
+
+impl Eval for Identifier {
+    fn eval(&self, env: Container<impl Environment>) -> Result<Object> {
+        if let Some(obj) = env.get().get(self.name.as_ref()) {
+            return Ok(obj.get().clone());
+        }
+        Err(ParseError::IdentifierNotFound(self.name.clone()))
     }
 }

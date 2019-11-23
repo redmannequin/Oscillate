@@ -1,9 +1,15 @@
 use crate::Lexer;
-use crate::Result;
-use crate::parse::Parse;
+use crate::Object;
+
+use crate::traits::Parse;
+use crate::traits::Eval;
+use crate::traits::Environment;
+use crate::traits::Container;
 
 use crate::expression::Identifier;
 use crate::expression::Expression;
+
+use crate::Result;
 
 #[derive(Debug, Clone)]
 pub struct Assign {
@@ -16,9 +22,6 @@ impl Assign {
         let value = Box::new(value); 
         Self { ident, value }
     }
-
-    pub fn get_ident(&self) -> &Identifier { &self.ident }
-    pub fn get_value(&self) -> &Box<Expression> { &self.value }
 }
 
 impl Parse for Assign {
@@ -37,5 +40,13 @@ impl Parse for Assign {
         Self::on_semicolon(lexer)?;
 
         Ok(Assign::new(ident,value))
+    }
+}
+
+impl Eval for Assign {
+    fn eval(&self, env: Container<impl Environment>) -> Result<Object> {
+        let result = self.value.eval(env.clone())?;
+        env.get_mut().set(self.ident.name.as_ref(), result.clone());
+        Ok(result)
     }
 }

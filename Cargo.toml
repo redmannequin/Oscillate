@@ -1,6 +1,5 @@
 [workspace]
 members = [
     "oscillate",
-    "parser",
-    "eval"
+    "parser"
 ]

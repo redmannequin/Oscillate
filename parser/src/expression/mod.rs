@@ -1,14 +1,14 @@
-use crate::Parse;
 use crate::Lexer;
+use crate::Object;
+use crate::TokenType;
+
+use crate::traits::Parse;
+use crate::traits::Eval;
+use crate::traits::Environment;
+use crate::traits::Container;
 
 use crate::Result;
 use crate::error::ParseError;
-
-use crate::TokenType;
-
-//
-// Expressions 
-//
 
 mod assign;
 pub use assign::Assign;
@@ -132,5 +132,18 @@ impl Expression {
 impl Parse for Expression {
     fn parse(lexer: &mut Lexer) -> Result<Self> {
         Self::parse_exp(lexer, Precedence::Lowest)
+    }
+}
+
+impl Eval for Expression {
+    fn eval(&self, env: Container<impl Environment>) -> Result<Object> {
+        match self {
+            Expression::Assign(assign) => assign.eval(env),
+            Expression::Real(num) => num.eval(env),
+            Expression::Prefix(prefix) => prefix.eval(env),
+            Expression::Identifier(ident) => ident.eval(env),
+            Expression::Infix(infix) => infix.eval(env),
+            _ => Err(ParseError::Ops)
+        }
     }
 }

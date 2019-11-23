@@ -1,8 +1,14 @@
 use crate::Lexer;
-use crate::Result;
-use crate::parse::Parse;
-use crate::error::ParseError;
 use crate::TokenType;
+use crate::Object;
+
+use crate::traits::Parse;
+use crate::traits::Eval;
+use crate::traits::Environment;
+use crate::traits::Container;
+
+use crate::Result;
+use crate::error::ParseError;
 
 use crate::expression::Expression;
 
@@ -39,5 +45,18 @@ impl Parse for Prefix {
         lexer.next();
         let exp = Expression::parse(lexer)?;
         Ok(Prefix::new(prefix_type, exp))
+    }
+}
+
+impl Eval for Prefix {
+    fn eval(&self, env: Container<impl Environment>) -> Result<Object> {
+        let obj = Expression::eval(self.expression.as_ref(), env)?;
+        match self.prefix {
+            PrefixType::Not => Err(ParseError::Ops),
+            PrefixType::Minus => match obj {
+                Object::Real(num) => Ok(Object::Real(-num)),
+                _ =>  Err(ParseError::Ops)
+            } 
+        }
     }
 }

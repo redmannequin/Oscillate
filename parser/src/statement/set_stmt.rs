@@ -4,7 +4,7 @@ use crate::Lexer;
 use crate::Result;
 // use crate::error::ParseError;
 
-use crate::parse::Parse;
+use crate::traits::Parse;
 
 #[derive(Debug, Clone)]
 pub struct Set {}
@@ -14,7 +14,7 @@ impl Set {
 }
 
 impl Parse for Set {
-    fn parse(lexer: &mut Lexer) -> Result<Self> {
+    fn parse(_lexer: &mut Lexer) -> Result<Self> {
         Ok(Set::new())
     }
 }

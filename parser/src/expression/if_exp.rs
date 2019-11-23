@@ -1,6 +1,6 @@
 use crate::Lexer;
 use crate::Result;
-use crate::parse::Parse;
+use crate::traits::Parse;
 use crate::error::ParseError;
 use crate::TokenType;
 

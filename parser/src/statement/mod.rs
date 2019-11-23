@@ -8,14 +8,22 @@ pub use set_stmt::Set;
 mod use_stmt;
 pub use use_stmt::Use;
 
-use crate::expression::Expression;
-
-use crate::Parse;
 use crate::Lexer;
-use crate::Result;
 use crate::TokenType;
+use crate::Object;
+
+use crate::traits::Parse;
+use crate::traits::Eval;
+use crate::traits::Environment;
+use crate::traits::Container;
+
+use crate::Result;
 use crate::error::ParseError;
 
+use crate::expression::Expression;
+
+/// Statemnet
+/// 
 #[derive(Debug, Clone)]
 pub enum Statement {
     Define(Define),
@@ -70,10 +78,8 @@ impl Statement {
 
 }
 
-//
-//  PARSE
-//
-
+/// Statment Parse
+///
 impl Parse for Statement {
     fn parse(lexer: &mut Lexer) -> Result<Self> {
         let tok = lexer.curr().token_type.clone();
@@ -82,6 +88,19 @@ impl Parse for Statement {
             TokenType::Set => Self::parse_set(lexer),
             TokenType::Define => Self::parse_define(lexer),
             _ => Self::parse_expression(lexer)
+        }
+    }
+}
+
+/// Statement Eval
+///  
+impl Eval for Statement {
+    fn eval(&self, env: Container<impl Environment>) -> Result<Object> {
+        match self {
+            Statement::Define(_) => Err(ParseError::Ops),
+            Statement::Set(_) => Err(ParseError::Ops),
+            Statement::Use(_) => Err(ParseError::Ops),
+            Statement::Expression(exp) => exp.eval(env)
         }
     }
 }

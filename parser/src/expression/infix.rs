@@ -1,9 +1,16 @@
 use crate::Lexer;
-use crate::Result;
-use crate::parse::Parse;
-use crate::error::ParseError;
 use crate::Token;
 use crate::TokenType;
+use crate::Object;
+
+use crate::traits::Parse;
+use crate::traits::Eval;
+use crate::traits::Environment;
+use crate::traits::Container;
+
+use crate::Result;
+use crate::error::ParseError;
+
 
 use crate::expression::Expression;
 
@@ -79,5 +86,33 @@ impl Infix {
             TokenType::Divide => Precedence::Product,
             _ => return Err(ParseError::ExpectedInfix(tok.clone()))
         })
+    }
+
+    fn eval_integer_infix_exp(&self, left: f64, right: f64) -> Result<Object> {
+        Ok(match self.infix.0 {
+            Some(InfixEnum::Equal) => Object::Bool(left == right),
+            Some(InfixEnum::NotEqual) => Object::Bool(left != right),
+            Some(InfixEnum::LessThan) => Object::Bool(left < right),
+            Some(InfixEnum::GraterThan) => Object::Bool(left > right),
+            Some(InfixEnum::Plus) => Object::Real(left + right),
+            Some(InfixEnum::Minus) => Object::Real(left - right),
+            Some(InfixEnum::Star) => Object::Real(left * right),
+            Some(InfixEnum::Divide) => Object::Real(left / right),
+            None => return Err(ParseError::Ops)
+        })
+    }
+}
+
+impl Eval for Infix {
+    fn eval(&self, env: Container<impl Environment>) -> Result<Object> {
+        let left_obj = Expression::eval(self.left_exp.as_ref(), env.clone())?;
+        let right_obj = Expression::eval(self.right_exp.as_ref(), env.clone())?;
+
+        match (left_obj, right_obj) {
+            (Object::Real(left), Object::Real(right)) => {
+                self.eval_integer_infix_exp(left, right)
+            },
+            _ => Err(ParseError::Ops)
+        }
     }
 }

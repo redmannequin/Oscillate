@@ -30,6 +30,9 @@ pub enum ParseError {
     ParseReal,
 
     InvalidSoruce(Token),
+
+    Ops,
+    IdentifierNotFound(String),
     
 }
 
@@ -50,7 +53,11 @@ impl Error for ParseError {
             ParseError::ExpectedOpenCurlyBracket(_) => "Expected Open Curly Bracket",
             ParseError::ExpectedCloseCurlyBracket(_) => "Expected Close Curly Bracket",
 
-            ParseError::ParseReal => "Faild to parse Real"
+            ParseError::ParseReal => "Faild to parse Real",
+
+            ParseError::Ops => "Ops",
+
+            ParseError::IdentifierNotFound(_) => "Identifier Not Found",
         }
     }
 }
