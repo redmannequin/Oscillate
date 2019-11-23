@@ -14,9 +14,9 @@ pub struct Lexer {
 
 impl Lexer {
 
-    pub fn new(source: &str) -> Self {
+    pub fn new(source: String) -> Self {
         let mut lex = Lexer {
-            source: String::from(source),
+            source: source,
             curr_line: 1,
 
             curr_ch: None,

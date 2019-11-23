@@ -1,33 +1,24 @@
 use std::io;
 use std::io::Write;
 
-use parser::Lexer;
-use parser::Parser;
-use parser::eval;
-use parser::Env;
-use parser::traits::Container;
+use interpreter::Evaluator;
 
 pub fn start() {
     let stdin = io::stdin();
     let mut stdout = io::stdout();
-    let mut input = String::new();
+    
 
-    let env = Container::new(Env::new());
+    let env = Evaluator::new();
 
     loop {
-        input.clear();
+        let mut input = String::new();
         print!(">> ");
         stdout.flush().expect("Error faild to flush");
         stdin.read_line(&mut input).expect("Error reading from STDIN");
         
-        let lexer = Lexer::new(input.as_str());
-        let mut parser = Parser::new(lexer);
-        let program = parser.parse().unwrap();
-
-        match eval(&program, env.clone()) {
+        match env.eval(input)  {
             Ok(obj) => println!("{:?}", obj),
             Err(err) => println!("Error: {:?}", err)
         }
-        
     }
 }

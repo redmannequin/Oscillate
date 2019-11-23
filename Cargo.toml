@@ -1,5 +1,5 @@
 [workspace]
 members = [
     "oscillate",
-    "parser"
+    "interpreter"
 ]

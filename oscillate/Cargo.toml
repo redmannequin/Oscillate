@@ -5,4 +5,4 @@ authors = ["Flavio B. <barinas.flavio@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-parser = { path = "../parser" }
+interpreter = { path = "../interpreter" }
