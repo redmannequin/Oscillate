@@ -4,7 +4,7 @@ A scripting language for audio production written in rust with a focus on simpli
 
 ## Building
 
-Use [cargo](https://www.rust-lang.org/tools/install)(rusts package manager) to build oscillate.
+Use [cargo](https://www.rust-lang.org/tools/install) to build oscillate.
 
 ```bash
 cargo build --release
