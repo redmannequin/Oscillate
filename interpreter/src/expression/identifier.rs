@@ -48,3 +48,8 @@ impl EvalTrait for Identifier {
         Err(ParseError::IdentifierNotFound(self.name.clone()))
     }
 }
+
+#[test]
+fn ident() {
+    unimplemented!()
+}

@@ -18,3 +18,8 @@ impl<T> Container<T> {
 impl<T> Clone for Container<T> {
     fn clone(&self) -> Self { Self(Rc::clone(&self.0)) }
 }
+
+#[test]
+fn container() {
+    unimplemented!()
+}

@@ -34,3 +34,8 @@ impl Evaluator {
         Ok(result)
     }
 }
+
+#[test]
+fn evaluator() {
+    unimplemented!()
+}

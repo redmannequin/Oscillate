@@ -17,3 +17,8 @@ impl ParseTrait for Use {
         Ok(Use::new())
     }
 }
+
+#[test]
+fn use_statement() {
+    unimplemented!()
+}

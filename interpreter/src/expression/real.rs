@@ -45,3 +45,41 @@ impl EvalTrait for Real {
         Ok(obj)
     }
 }
+
+#[test]
+fn real_with_decimal() {
+    let source = "0.5;";
+    let env = Container::new(Env::new());
+
+    let mut lexer = Lexer::new(String::from(source));
+    lexer.next();
+
+    let real = Real::parse(&mut lexer);
+    assert!(real.is_ok(), "Real parse failed: {:?}", real);
+    let real = real.unwrap();
+    
+    let obj = real.eval(env);
+    assert!(obj.is_ok(), "Real eval failed: {:?}", obj);
+    let obj = obj.unwrap();
+
+    assert_eq!(obj, Object::Real(0.5));
+}
+
+#[test]
+fn real_without_decimal() {
+    let source = "5;";
+    let env = Container::new(Env::new());
+
+    let mut lexer = Lexer::new(String::from(source));
+    lexer.next();
+
+    let real = Real::parse(&mut lexer);
+    assert!(real.is_ok(), "Real parse failed: {:?}", real);
+    let real = real.unwrap();
+    
+    let obj = real.eval(env);
+    assert!(obj.is_ok(), "Real eval failed: {:?}", obj);
+    let obj = obj.unwrap();
+
+    assert_eq!(obj, Object::Real(5.0));
+}

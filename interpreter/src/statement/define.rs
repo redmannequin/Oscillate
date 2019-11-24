@@ -49,3 +49,8 @@ impl ParseTrait for Define {
         Ok(Define::new(name, body))
     }
 }
+
+#[test]
+fn define_statement() {
+    unimplemented!()
+}

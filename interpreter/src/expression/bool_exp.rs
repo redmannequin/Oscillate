@@ -31,3 +31,8 @@ impl ParseTrait for Bool {
         }
     }
 }
+
+#[test]
+fn bool() {
+    unimplemented!()
+}

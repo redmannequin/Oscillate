@@ -184,3 +184,8 @@ impl LexerTrait for Lexer {
         &self.curr_tok
     }
 }
+
+#[test]
+fn lexer() {
+    unimplemented!()
+}

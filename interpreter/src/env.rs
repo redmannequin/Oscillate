@@ -47,3 +47,8 @@ impl<O> NamespaceTrait<O> for Env<O> {
     }
 
 }
+
+#[test]
+fn env() {
+    unimplemented!()
+}

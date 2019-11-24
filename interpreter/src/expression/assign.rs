@@ -61,3 +61,22 @@ impl EvalTrait for Assign {
         Ok(result)
     }
 }
+
+#[test]
+fn assign() {
+    let source = "a:5;";
+    let env = Container::new(Env::new());
+
+    let mut lexer = Lexer::new(String::from(source));
+    lexer.next();
+
+    let assign = Assign::parse(&mut lexer);
+    assert!(assign.is_ok(), "Assign parse failed: {:?}", assign);
+    let assign = assign.unwrap();
+    
+    let obj = assign.eval(env);
+    assert!(obj.is_ok(), "Assign eval failed: {:?}", obj);
+    let obj = obj.unwrap();
+
+    assert_eq!(obj, Object::Real(5.0));
+}

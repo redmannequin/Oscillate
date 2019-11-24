@@ -64,3 +64,8 @@ pub fn on_semicolon(lexer: &mut Lexer) -> Result<()> {
         Err(ParseError::ExpectedSemicolon(tok.clone()))
     }
 }
+
+#[test]
+fn parser() {
+    unimplemented!()
+}

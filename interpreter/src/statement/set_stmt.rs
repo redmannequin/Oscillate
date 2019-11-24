@@ -17,3 +17,8 @@ impl ParseTrait for Set {
         Ok(Set::new())
     }
 }
+
+#[test]
+fn set_statement() {
+    unimplemented!()
+}

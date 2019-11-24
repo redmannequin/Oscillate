@@ -70,3 +70,41 @@ impl EvalTrait for Prefix {
         }
     }
 }
+
+#[test]
+fn not_prefix() {
+    let source = "!true;";
+    let env = Container::new(Env::new());
+
+    let mut lexer = Lexer::new(String::from(source));
+    lexer.next();
+
+    let prefix = Prefix::parse(&mut lexer);
+    assert!(prefix.is_ok(), "Prefix parse failed: {:?}", prefix);
+    let prefix = prefix.unwrap();
+    
+    let obj = prefix.eval(env);
+    assert!(obj.is_ok(), "Prefix eval failed: {:?}", obj);
+    let obj = obj.unwrap();
+
+    assert_eq!(obj, Object::Bool(false));
+}
+
+#[test]
+fn minus_prefix() {
+    let source = "-5;";
+    let env = Container::new(Env::new());
+
+    let mut lexer = Lexer::new(String::from(source));
+    lexer.next();
+
+    let prefix = Prefix::parse(&mut lexer);
+    assert!(prefix.is_ok(), "Prefix parse failed: {:?}", prefix);
+    let prefix = prefix.unwrap();
+    
+    let obj = prefix.eval(env);
+    assert!(obj.is_ok(), "Prefix eval failed: {:?}", obj);
+    let obj = obj.unwrap();
+
+    assert_eq!(obj, Object::Real(-5.0));
+}

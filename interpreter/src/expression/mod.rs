@@ -155,3 +155,13 @@ impl EvalTrait for Expression {
         }
     }
 }
+
+#[test]
+fn left_expression() {
+    unimplemented!()
+}
+
+#[test]
+fn expression() {
+    unimplemented!()
+}

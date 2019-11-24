@@ -1,6 +1,6 @@
 /// Object
 /// 
-#[derive(Debug, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Object {
     Bool(bool),
     Real(f64),

@@ -70,3 +70,23 @@ impl ParseTrait for If {
         Ok(If::new(cond_blocks, otherwise))
     }
 }
+
+#[test]
+fn if_exp() {
+    unimplemented!()
+}
+
+#[test]
+fn if_else_exp() {
+    unimplemented!()
+}
+
+#[test]
+fn if_if_else_exp() {
+    unimplemented!()
+}
+
+#[test]
+fn if_if_else_else_exp() {
+    unimplemented!()
+}
