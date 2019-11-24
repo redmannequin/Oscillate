@@ -1,4 +1,5 @@
 # Oscillate
+![](https://github.com/redmannequin/Oscillate/workflows/Rust/badge.svg)
 
 A scripting language for audio production written in rust with a focus on simplicity and extendability.
 
