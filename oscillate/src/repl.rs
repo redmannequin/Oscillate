@@ -6,8 +6,6 @@ use interpreter::Evaluator;
 pub fn start() {
     let stdin = io::stdin();
     let mut stdout = io::stdout();
-    
-
     let env = Evaluator::new();
 
     loop {

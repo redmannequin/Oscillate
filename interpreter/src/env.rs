@@ -1,16 +1,17 @@
 use std::collections::HashMap;
 
-use crate::Object;
-use crate::traits::Container;
-use crate::traits::Environment;
+use crate::Container;
+use crate::traits::NamespaceTrait;
 
+/// Env
+/// 
 #[derive(Debug, Clone)]
-pub struct Env {
-    store: HashMap<String, Container<Object>>,
-    outer: Option<Container<Env>>
+pub struct Env<O> {
+    store: HashMap<String, Container<O>>,
+    outer: Option<Container<Env<O>>>
 }
 
-impl Env {
+impl<O> Env<O> {
     pub fn new() -> Self {
         Env {
             store: HashMap::new(),
@@ -19,9 +20,9 @@ impl Env {
     }
 }
 
-impl Environment for Env {
+impl<O> NamespaceTrait<O> for Env<O> {
 
-    fn get(&self, name: &str) -> Option<Container<Object>> {
+    fn get(&self, name: &str) -> Option<Container<O>> {
         match self.store.get(name) {
             Some(value) => Some(value.clone()),
             None => self
@@ -31,7 +32,7 @@ impl Environment for Env {
         }
     }
 
-    fn set(&mut self, name: &str, val: Object) {
+    fn set(&mut self, name: &str, val: O) {
         match self.store.get_mut(name) {
             Some(var) => { 
                 var.set(val); 

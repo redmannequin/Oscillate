@@ -11,11 +11,14 @@ pub use use_stmt::Use;
 use crate::Lexer;
 use crate::TokenType;
 use crate::Object;
+use crate::Container;
+use crate::Env;
 
-use crate::traits::Parse;
-use crate::traits::Eval;
-use crate::traits::Environment;
-use crate::traits::Container;
+use crate::parser::expect_curr;
+
+use crate::traits::ParseTrait;
+use crate::traits::EvalTrait;
+use crate::traits::LexerTrait;
 
 use crate::Result;
 use crate::error::ParseError;
@@ -37,7 +40,7 @@ impl Statement {
     pub fn parse_block(lexer: &mut Lexer) -> Result<Vec<Self>> {
         let mut block = Vec::new();
         let tok = lexer.curr().clone();
-        Self::expect_curr(lexer, TokenType::OpenCurlyBracket, ParseError::ExpectedOpenCurlyBracket(tok))?;
+        expect_curr(lexer, TokenType::OpenCurlyBracket, ParseError::ExpectedOpenCurlyBracket(tok))?;
         loop {
             let tok = lexer.next().token_type.clone();
             let stmt = match tok {
@@ -80,8 +83,10 @@ impl Statement {
 
 /// Statment Parse
 ///
-impl Parse for Statement {
-    fn parse(lexer: &mut Lexer) -> Result<Self> {
+impl ParseTrait for Statement {
+    type Lexer = Lexer;
+
+    fn parse(lexer: &mut Self::Lexer) -> Result<Self> {
         let tok = lexer.curr().token_type.clone();
         match tok {
             TokenType::Use => Self::parse_use(lexer),
@@ -94,8 +99,11 @@ impl Parse for Statement {
 
 /// Statement Eval
 ///  
-impl Eval for Statement {
-    fn eval(&self, env: Container<impl Environment>) -> Result<Object> {
+impl EvalTrait for Statement {
+    type Object = Object;
+    type Namespace = Env<Object>;
+
+    fn eval(&self, env: Container<Self::Namespace>) -> Result<Object> {
         match self {
             Statement::Define(_) => Err(ParseError::Ops),
             Statement::Set(_) => Err(ParseError::Ops),

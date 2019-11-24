@@ -1,11 +1,12 @@
 use crate::Lexer;
 use crate::Object;
 use crate::TokenType;
+use crate::Container;
+use crate::Env;
 
-use crate::traits::Parse;
-use crate::traits::Eval;
-use crate::traits::Environment;
-use crate::traits::Container;
+use crate::traits::LexerTrait;
+use crate::traits::ParseTrait;
+use crate::traits::EvalTrait;
 
 use crate::Result;
 use crate::error::ParseError;
@@ -35,6 +36,8 @@ pub use prefix::PrefixType;
 mod real;
 pub use real::Real;
 
+/// Expression
+/// 
 #[derive(Debug, Clone)]
 pub enum Expression {
     Assign(Assign),
@@ -129,14 +132,19 @@ impl Expression {
 
 }
 
-impl Parse for Expression {
-    fn parse(lexer: &mut Lexer) -> Result<Self> {
+impl ParseTrait for Expression {
+    type Lexer = Lexer;
+
+    fn parse(lexer: &mut Self::Lexer) -> Result<Self> {
         Self::parse_exp(lexer, Precedence::Lowest)
     }
 }
 
-impl Eval for Expression {
-    fn eval(&self, env: Container<impl Environment>) -> Result<Object> {
+impl EvalTrait for Expression {
+    type Object = Object;
+    type Namespace = Env<Object>;
+
+    fn eval(&self, env: Container<Self::Namespace>) -> Result<Object> {
         match self {
             Expression::Assign(assign) => assign.eval(env),
             Expression::Real(num) => num.eval(env),

@@ -1,6 +1,10 @@
 use super::Token;
 use super::TokenType;
 
+use crate::traits::LexerTrait;
+
+/// Lexer
+/// 
 pub struct Lexer {
     source: String,
     curr_line: u32,
@@ -28,20 +32,6 @@ impl Lexer {
         lex.next_char();
         lex.next();
         lex
-    }
-
-    pub fn next(&mut self) -> &Token {
-        self.curr_tok = self.peek_tok.clone();
-        self.peek_tok = self.next_token();
-        &self.curr_tok
-    }
-
-    pub fn peek(&self) -> &Token {
-        &self.peek_tok
-    }
-
-    pub fn curr(&self) -> &Token {
-        &self.curr_tok
     }
 
     fn next_char(&mut self) -> Option<char> {
@@ -175,4 +165,22 @@ impl Lexer {
         Token::new(token_type, self.curr_line)
     }
     
+}
+
+impl LexerTrait for Lexer {
+    type Token = Token;
+
+    fn next(&mut self) -> &Token {
+        self.curr_tok = self.peek_tok.clone();
+        self.peek_tok = self.next_token();
+        &self.curr_tok
+    }
+
+    fn peek(&self) -> &Token {
+        &self.peek_tok
+    }
+
+    fn curr(&self) -> &Token {
+        &self.curr_tok
+    }
 }

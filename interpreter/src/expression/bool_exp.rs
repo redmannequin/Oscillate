@@ -1,21 +1,28 @@
 use crate::Lexer;
-use crate::Result;
-use crate::traits::Parse;
-use crate::error::ParseError;
 use crate::TokenType;
 
+use crate::traits::LexerTrait;
+use crate::traits::ParseTrait;
+
+use crate::Result;
+use crate::error::ParseError;
+
+
+/// Bool
+/// 
 #[derive(Debug, Clone)]
 pub struct Bool {
-    value: bool
+    pub value: bool
 }
 
 impl Bool {
     pub fn new(value: bool) -> Self { Self { value } }
-    pub fn get_vaule(&self) -> bool { self.value }
 }
 
-impl Parse for Bool {
-    fn parse(lexer: &mut Lexer) -> Result<Self> {
+impl ParseTrait for Bool {
+    type Lexer = Lexer;
+    
+    fn parse(lexer: &mut Self::Lexer) -> Result<Self> {
         let tok = lexer.curr();
         match tok.token_type {
             TokenType::True => Ok(Bool::new(true)),

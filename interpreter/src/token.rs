@@ -1,4 +1,7 @@
+use crate::traits::TokenTrait;
 
+/// TokenType
+/// 
 #[derive(Debug, PartialEq, Clone)]
 pub enum TokenType {
     Illegal,
@@ -58,6 +61,8 @@ pub enum TokenType {
     Set
 }
 
+/// Token
+/// 
 #[derive(Debug, Clone)]
 pub struct Token {
     pub token_type: TokenType,
@@ -70,5 +75,17 @@ impl Token {
             token_type: token_type,
             line: line
         }
+    }
+}
+
+impl TokenTrait for Token {
+    type TokenType = TokenType;
+
+    fn get_type(&self) -> &Self::TokenType {
+        &self.token_type
+    }
+    
+    fn get_line(&self) -> u32 {
+        self.line
     }
 }

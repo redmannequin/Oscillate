@@ -3,16 +3,16 @@ use crate::Object;
 
 use crate::Lexer;
 use crate::Parser;
+use crate::Container;
 
-use crate::traits::Eval;
-use crate::traits::Container;
+use crate::traits::EvalTrait;
 
 use crate::Result;
 
 /// Evaluator
 /// 
 pub struct Evaluator {
-    env: Container<Env>
+    env: Container<Env<Object>>
 }
 
 impl Evaluator {

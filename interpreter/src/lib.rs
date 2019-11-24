@@ -1,9 +1,14 @@
+//! # How the Interperter works 
+//! Magic
 
 pub mod expression;
 pub use expression::Expression;
 
 pub mod statement;
 pub use statement::Statement;
+
+mod container;
+pub use container::Container;
 
 mod env;
 pub use env::Env;
@@ -23,7 +28,7 @@ pub use object::Object;
 mod parser;
 pub use parser::Parser;
 
-pub mod token;
+mod token;
 pub use token::Token;
 pub use token::TokenType;
 

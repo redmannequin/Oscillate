@@ -1,14 +1,19 @@
-use crate::Lexer;
 use crate::TokenType;
+use crate::Lexer;
+
+use crate::parser::expect_peek;
 
 use crate::Result;
 use crate::error::ParseError;
 
-use crate::traits::Parse;
+use crate::traits::ParseTrait;
+use crate::traits::LexerTrait;
 
 use crate::expression::Expression;
 use crate::expression::Identifier;
 
+/// Define
+/// 
 #[derive(Debug, Clone)]
 pub struct Define {
     name: Identifier,
@@ -25,12 +30,14 @@ impl Define {
     pub fn get_body(&self) -> &Vec<Expression> { &self.body }
 }
 
-impl Parse for Define {
-    fn parse(lexer: &mut Lexer) -> Result<Self> {
+impl ParseTrait for Define {
+    type Lexer = Lexer;
+
+    fn parse(lexer: &mut Self::Lexer) -> Result<Self> {
         lexer.next();
         let name = Identifier::parse(lexer)?;
         let tok = lexer.peek().clone();
-        Self::expect_peek(lexer, TokenType::OpenCurlyBracket, ParseError::ExpectedOpenCurlyBracket(tok))?;
+        expect_peek(lexer, TokenType::OpenCurlyBracket, ParseError::ExpectedOpenCurlyBracket(tok))?;
 
         let mut body = Vec::new();
         loop {

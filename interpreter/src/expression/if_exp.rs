@@ -1,20 +1,26 @@
 use crate::Lexer;
-use crate::Result;
-use crate::traits::Parse;
-use crate::error::ParseError;
 use crate::TokenType;
+
+use crate::parser::expect_peek;
+
+use crate::traits::LexerTrait;
+use crate::traits::ParseTrait;
+
+use crate::Result;
+use crate::error::ParseError;
 
 use crate::expression::Expression;
 use crate::statement::Statement;
 
+/// If 
+/// 
 #[derive(Debug, Clone)]
 pub struct If {
-    cond_blocks: Vec<(Box<Expression>, Vec<Statement>)>,
-    otherwise: Option<Vec<Statement>>
+    pub cond_blocks: Vec<(Box<Expression>, Vec<Statement>)>,
+    pub otherwise: Option<Vec<Statement>>
 }
 
 impl If {
-
     pub fn new(
         cond_blocks: Vec<(Box<Expression>, Vec<Statement>)>,
         otherwise: Option<Vec<Statement>>
@@ -24,23 +30,19 @@ impl If {
             otherwise
         } 
     }
-
-    pub fn get_conditional_blocks(&self) -> 
-        &Vec<(Box<Expression>, Vec<Statement>)> { &self.cond_blocks }
-    
-    pub fn get_otherwise(&self) -> &Option<Vec<Statement>> { &self.otherwise }
-
 }
 
-impl Parse for If {
-    fn parse(lexer: &mut Lexer) -> Result<Self> {
+impl ParseTrait for If {
+    type Lexer = Lexer;
+
+    fn parse(lexer: &mut Self::Lexer) -> Result<Self> {
         let mut cond_blocks = Vec::new();
         let mut otherwise = None;
 
         lexer.next();
         let exp = Expression::parse(lexer)?;
         let tok = lexer.peek().clone();
-        Self::expect_peek(lexer, TokenType::OpenCurlyBracket, ParseError::ExpectedOpenCurlyBracket(tok))?;
+        expect_peek(lexer, TokenType::OpenCurlyBracket, ParseError::ExpectedOpenCurlyBracket(tok))?;
         let stmt = Statement::parse_block(lexer)?;
         cond_blocks.push((Box::new(exp),stmt));
 
@@ -53,7 +55,7 @@ impl Parse for If {
                     lexer.next();
                     let exp = Expression::parse(lexer)?;
                     let tok = lexer.peek().clone();
-                    Self::expect_peek(lexer, TokenType::OpenCurlyBracket, ParseError::ExpectedOpenCurlyBracket(tok))?;
+                    expect_peek(lexer, TokenType::OpenCurlyBracket, ParseError::ExpectedOpenCurlyBracket(tok))?;
                     let stmt = Statement::parse_block(lexer)?;
                     cond_blocks.push((Box::new(exp),stmt));
                 },
