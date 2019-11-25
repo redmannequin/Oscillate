@@ -105,6 +105,14 @@ impl Infix {
             None => return Err(ParseError::Ops)
         })
     }
+
+    fn eval_bool_infix_exp(&self, left: bool, right: bool) -> Result<Object> {
+        Ok(match self.infix.0 {
+            Some(InfixEnum::Equal) => Object::Bool(left == right),
+            Some(InfixEnum::NotEqual) => Object::Bool(left != right),
+            _ => return Err(ParseError::Ops)
+        })
+    }
 }
 
 impl EvalTrait for Infix {
@@ -118,6 +126,9 @@ impl EvalTrait for Infix {
         match (left_obj, right_obj) {
             (Object::Real(left), Object::Real(right)) => {
                 self.eval_integer_infix_exp(left, right)
+            },
+            (Object::Bool(left), Object::Bool(right)) => {
+                self.eval_bool_infix_exp(left, right)
             },
             _ => Err(ParseError::Ops)
         }
