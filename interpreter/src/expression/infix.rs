@@ -60,7 +60,7 @@ impl ParseTrait for InfixType {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Infix {
     pub infix: InfixType,
     pub left_exp: Box<Expression>,
@@ -124,151 +124,170 @@ impl EvalTrait for Infix {
     }
 }
 
-#[test]
-fn infix_type() {
-    let source = "+";
-    let mut lexer = Lexer::new(String::from(source));
-    lexer.next();
+#[cfg(test)]
+mod infix_tests {
+    use crate::Object;
+    use crate::Container;
+    use crate::Env;
+    use crate::Lexer;
 
-    let infix_type = InfixType::parse(&mut lexer);
-    assert!(infix_type.is_ok(), "Prefix parse failed: {:?}", infix_type);
-    let infix_type = infix_type.unwrap();
+    use crate::traits::LexerTrait;
+    use crate::traits::ParseTrait;
+    use crate::traits::EvalTrait;
 
-    assert_eq!(infix_type, (Some(InfixEnum::Plus), Precedence::Sum));
-}
+    use crate::expression::Expression;
 
-#[test]
-fn equal_infix() {
-    use crate::expression::Real;
-    let env = Container::new(Env::new());
+    use super::Infix;
+    use super::InfixType;
+    use super::InfixEnum;
+    use super::Precedence;
 
-    let infix = (Some(InfixEnum::Equal), Precedence::Equals);
-    let left_exp = Expression::Real(Real::new(0.5));
-    let right_exp = Expression::Real(Real::new(0.5));
+    #[test]
+    fn infix_type() {
+        let source = "+";
+        let mut lexer = Lexer::new(String::from(source));
+        lexer.next();
 
-    let infix = Infix::new(infix, left_exp, right_exp);
-    let obj = infix.eval(env);
-    assert!(obj.is_ok(), "Infix eval failed: {:?}", obj);
-    let obj = obj.unwrap();
+        let infix_type = InfixType::parse(&mut lexer);
+        assert!(infix_type.is_ok(), "Prefix parse failed: {:?}", infix_type);
+        let infix_type = infix_type.unwrap();
 
-    assert_eq!(obj, Object::Bool(true));
-}
+        assert_eq!(infix_type, (Some(InfixEnum::Plus), Precedence::Sum));
+    }
 
-#[test]
-fn not_equal_infix() {
-    use crate::expression::Real;
-    let env = Container::new(Env::new());
+    #[test]
+    fn equal_infix() {
+        use crate::expression::Real;
+        let env = Container::new(Env::new());
 
-    let infix = (Some(InfixEnum::NotEqual), Precedence::Equals);
-    let left_exp = Expression::Real(Real::new(0.5));
-    let right_exp = Expression::Real(Real::new(0.5));
+        let infix = (Some(InfixEnum::Equal), Precedence::Equals);
+        let left_exp = Expression::Real(Real::new(0.5));
+        let right_exp = Expression::Real(Real::new(0.5));
 
-    let infix = Infix::new(infix, left_exp, right_exp);
-    let obj = infix.eval(env);
-    assert!(obj.is_ok(), "Infix eval failed: {:?}", obj);
-    let obj = obj.unwrap();
+        let infix = Infix::new(infix, left_exp, right_exp);
+        let obj = infix.eval(env);
+        assert!(obj.is_ok(), "Infix eval failed: {:?}", obj);
+        let obj = obj.unwrap();
 
-    assert_eq!(obj, Object::Bool(false));
-}
+        assert_eq!(obj, Object::Bool(true));
+    }
 
-#[test]
-fn less_than_infix() {
-    use crate::expression::Real;
-    let env = Container::new(Env::new());
+    #[test]
+    fn not_equal_infix() {
+        use crate::expression::Real;
+        let env = Container::new(Env::new());
 
-    let infix = (Some(InfixEnum::LessThan), Precedence::LessGreater);
-    let left_exp = Expression::Real(Real::new(0.5));
-    let right_exp = Expression::Real(Real::new(0.5));
+        let infix = (Some(InfixEnum::NotEqual), Precedence::Equals);
+        let left_exp = Expression::Real(Real::new(0.5));
+        let right_exp = Expression::Real(Real::new(0.5));
 
-    let infix = Infix::new(infix, left_exp, right_exp);
-    let obj = infix.eval(env);
-    assert!(obj.is_ok(), "Infix eval failed: {:?}", obj);
-    let obj = obj.unwrap();
+        let infix = Infix::new(infix, left_exp, right_exp);
+        let obj = infix.eval(env);
+        assert!(obj.is_ok(), "Infix eval failed: {:?}", obj);
+        let obj = obj.unwrap();
 
-    assert_eq!(obj, Object::Bool(false));
-}
+        assert_eq!(obj, Object::Bool(false));
+    }
 
-#[test]
-fn grater_than_infix() {
-    use crate::expression::Real;
-    let env = Container::new(Env::new());
+    #[test]
+    fn less_than_infix() {
+        use crate::expression::Real;
+        let env = Container::new(Env::new());
 
-    let infix = (Some(InfixEnum::GraterThan), Precedence::LessGreater);
-    let left_exp = Expression::Real(Real::new(0.5));
-    let right_exp = Expression::Real(Real::new(0.5));
+        let infix = (Some(InfixEnum::LessThan), Precedence::LessGreater);
+        let left_exp = Expression::Real(Real::new(0.5));
+        let right_exp = Expression::Real(Real::new(0.5));
 
-    let infix = Infix::new(infix, left_exp, right_exp);
-    let obj = infix.eval(env);
-    assert!(obj.is_ok(), "Infix eval failed: {:?}", obj);
-    let obj = obj.unwrap();
+        let infix = Infix::new(infix, left_exp, right_exp);
+        let obj = infix.eval(env);
+        assert!(obj.is_ok(), "Infix eval failed: {:?}", obj);
+        let obj = obj.unwrap();
 
-    assert_eq!(obj, Object::Bool(false));
-}
+        assert_eq!(obj, Object::Bool(false));
+    }
 
-#[test]
-fn plus_infix() {
-    use crate::expression::Real;
-    let env = Container::new(Env::new());
+    #[test]
+    fn grater_than_infix() {
+        use crate::expression::Real;
+        let env = Container::new(Env::new());
 
-    let infix = (Some(InfixEnum::Plus), Precedence::Sum);
-    let left_exp = Expression::Real(Real::new(0.5));
-    let right_exp = Expression::Real(Real::new(0.5));
+        let infix = (Some(InfixEnum::GraterThan), Precedence::LessGreater);
+        let left_exp = Expression::Real(Real::new(0.5));
+        let right_exp = Expression::Real(Real::new(0.5));
 
-    let infix = Infix::new(infix, left_exp, right_exp);
-    let obj = infix.eval(env);
-    assert!(obj.is_ok(), "Infix eval failed: {:?}", obj);
-    let obj = obj.unwrap();
+        let infix = Infix::new(infix, left_exp, right_exp);
+        let obj = infix.eval(env);
+        assert!(obj.is_ok(), "Infix eval failed: {:?}", obj);
+        let obj = obj.unwrap();
 
-    assert_eq!(obj, Object::Real(1.0));
-}
+        assert_eq!(obj, Object::Bool(false));
+    }
 
-#[test]
-fn minus_infix() {
-    use crate::expression::Real;
-    let env = Container::new(Env::new());
+    #[test]
+    fn plus_infix() {
+        use crate::expression::Real;
+        let env = Container::new(Env::new());
 
-    let infix = (Some(InfixEnum::Minus), Precedence::Sum);
-    let left_exp = Expression::Real(Real::new(0.5));
-    let right_exp = Expression::Real(Real::new(0.5));
+        let infix = (Some(InfixEnum::Plus), Precedence::Sum);
+        let left_exp = Expression::Real(Real::new(0.5));
+        let right_exp = Expression::Real(Real::new(0.5));
 
-    let infix = Infix::new(infix, left_exp, right_exp);
-    let obj = infix.eval(env);
-    assert!(obj.is_ok(), "Infix eval failed: {:?}", obj);
-    let obj = obj.unwrap();
+        let infix = Infix::new(infix, left_exp, right_exp);
+        let obj = infix.eval(env);
+        assert!(obj.is_ok(), "Infix eval failed: {:?}", obj);
+        let obj = obj.unwrap();
 
-    assert_eq!(obj, Object::Real(0.0));
-}
+        assert_eq!(obj, Object::Real(1.0));
+    }
 
-#[test]
-fn star_infix() {
-    use crate::expression::Real;
-    let env = Container::new(Env::new());
+    #[test]
+    fn minus_infix() {
+        use crate::expression::Real;
+        let env = Container::new(Env::new());
 
-    let infix = (Some(InfixEnum::Star), Precedence::Product);
-    let left_exp = Expression::Real(Real::new(0.5));
-    let right_exp = Expression::Real(Real::new(0.5));
+        let infix = (Some(InfixEnum::Minus), Precedence::Sum);
+        let left_exp = Expression::Real(Real::new(0.5));
+        let right_exp = Expression::Real(Real::new(0.5));
 
-    let infix = Infix::new(infix, left_exp, right_exp);
-    let obj = infix.eval(env);
-    assert!(obj.is_ok(), "Infix eval failed: {:?}", obj);
-    let obj = obj.unwrap();
+        let infix = Infix::new(infix, left_exp, right_exp);
+        let obj = infix.eval(env);
+        assert!(obj.is_ok(), "Infix eval failed: {:?}", obj);
+        let obj = obj.unwrap();
 
-    assert_eq!(obj, Object::Real(0.25));
-}
+        assert_eq!(obj, Object::Real(0.0));
+    }
 
-#[test]
-fn divide_infix() {
-    use crate::expression::Real;
-    let env = Container::new(Env::new());
+    #[test]
+    fn star_infix() {
+        use crate::expression::Real;
+        let env = Container::new(Env::new());
 
-    let infix = (Some(InfixEnum::Divide), Precedence::Product);
-    let left_exp = Expression::Real(Real::new(0.5));
-    let right_exp = Expression::Real(Real::new(0.5));
+        let infix = (Some(InfixEnum::Star), Precedence::Product);
+        let left_exp = Expression::Real(Real::new(0.5));
+        let right_exp = Expression::Real(Real::new(0.5));
 
-    let infix = Infix::new(infix, left_exp, right_exp);
-    let obj = infix.eval(env);
-    assert!(obj.is_ok(), "Infix eval failed: {:?}", obj);
-    let obj = obj.unwrap();
+        let infix = Infix::new(infix, left_exp, right_exp);
+        let obj = infix.eval(env);
+        assert!(obj.is_ok(), "Infix eval failed: {:?}", obj);
+        let obj = obj.unwrap();
 
-    assert_eq!(obj, Object::Real(1.0));
+        assert_eq!(obj, Object::Real(0.25));
+    }
+
+    #[test]
+    fn divide_infix() {
+        use crate::expression::Real;
+        let env = Container::new(Env::new());
+
+        let infix = (Some(InfixEnum::Divide), Precedence::Product);
+        let left_exp = Expression::Real(Real::new(0.5));
+        let right_exp = Expression::Real(Real::new(0.5));
+
+        let infix = Infix::new(infix, left_exp, right_exp);
+        let obj = infix.eval(env);
+        assert!(obj.is_ok(), "Infix eval failed: {:?}", obj);
+        let obj = obj.unwrap();
+
+        assert_eq!(obj, Object::Real(1.0));
+    }
 }

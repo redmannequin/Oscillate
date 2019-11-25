@@ -38,7 +38,7 @@ pub use real::Real;
 
 /// Expression
 /// 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Expression {
     Assign(Assign),
     Bool(Bool),
@@ -46,7 +46,8 @@ pub enum Expression {
     If(If),
     Infix(Infix),
     Prefix(Prefix),
-    Real(Real)
+    Real(Real),
+    Null
 }
 
 impl Expression {
@@ -151,17 +152,24 @@ impl EvalTrait for Expression {
             Expression::Prefix(prefix) => prefix.eval(env),
             Expression::Identifier(ident) => ident.eval(env),
             Expression::Infix(infix) => infix.eval(env),
-            _ => Err(ParseError::Ops)
+            Expression::Bool(bool_exp) => bool_exp.eval(env),
+            Expression::If(if_exp) => if_exp.eval(env),
+            Expression::Null => Ok(Object::Null)
         }
     }
 }
 
-#[test]
-fn left_expression() {
-    unimplemented!()
-}
+// #[cfg(test)]
+// mod expression_tests {
 
-#[test]
-fn expression() {
-    unimplemented!()
-}
+//     #[test]
+//     fn left_expression() {
+//         unimplemented!()
+//     }
+
+//     #[test]
+//     fn expression() {
+//         unimplemented!()
+//     }
+
+// }

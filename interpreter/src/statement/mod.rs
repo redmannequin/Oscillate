@@ -27,7 +27,7 @@ use crate::expression::Expression;
 
 /// Statemnet
 /// 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Statement {
     Define(Define),
     Set(Set),
@@ -113,7 +113,7 @@ impl EvalTrait for Statement {
     }
 }
 
-#[test]
-fn statement() {
-    unimplemented!()
-}
+// #[test]
+// fn statement() {
+//     unimplemented!()
+// }

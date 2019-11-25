@@ -15,7 +15,7 @@ use crate::expression::Expression;
 
 /// PrefixType
 /// 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum PrefixType {
     Minus,
     Not,
@@ -23,7 +23,7 @@ pub enum PrefixType {
 
 /// Prefix
 /// 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Prefix {
     pub prefix: PrefixType,
     pub expression: Box<Expression>
@@ -62,7 +62,7 @@ impl EvalTrait for Prefix {
     fn eval(&self, env: Container<Self::Namespace>) -> Result<Object> {
         let obj = Expression::eval(self.expression.as_ref(), env)?;
         match self.prefix {
-            PrefixType::Not => Err(ParseError::Ops),
+            PrefixType::Not => Ok(Object::Bool(!obj.is_true())),
             PrefixType::Minus => match obj {
                 Object::Real(num) => Ok(Object::Real(-num)),
                 _ =>  Err(ParseError::Ops)
@@ -71,40 +71,54 @@ impl EvalTrait for Prefix {
     }
 }
 
-#[test]
-fn not_prefix() {
-    let source = "!true;";
-    let env = Container::new(Env::new());
+#[cfg(test)]
+mod prefix_tests {
+    use crate::Object;
+    use crate::Container;
+    use crate::Env;
+    use crate::Lexer;
 
-    let mut lexer = Lexer::new(String::from(source));
-    lexer.next();
+    use crate::traits::LexerTrait;
+    use crate::traits::ParseTrait;
+    use crate::traits::EvalTrait;
 
-    let prefix = Prefix::parse(&mut lexer);
-    assert!(prefix.is_ok(), "Prefix parse failed: {:?}", prefix);
-    let prefix = prefix.unwrap();
-    
-    let obj = prefix.eval(env);
-    assert!(obj.is_ok(), "Prefix eval failed: {:?}", obj);
-    let obj = obj.unwrap();
+    use super::Prefix;
 
-    assert_eq!(obj, Object::Bool(false));
-}
+    #[test]
+    fn not_prefix() {
+        let source = "!true;";
+        let env = Container::new(Env::new());
 
-#[test]
-fn minus_prefix() {
-    let source = "-5;";
-    let env = Container::new(Env::new());
+        let mut lexer = Lexer::new(String::from(source));
+        lexer.next();
 
-    let mut lexer = Lexer::new(String::from(source));
-    lexer.next();
+        let prefix = Prefix::parse(&mut lexer);
+        assert!(prefix.is_ok(), "Prefix parse failed: {:?}", prefix);
+        let prefix = prefix.unwrap();
+        
+        let obj = prefix.eval(env);
+        assert!(obj.is_ok(), "Prefix eval failed: {:?}", obj);
+        let obj = obj.unwrap();
 
-    let prefix = Prefix::parse(&mut lexer);
-    assert!(prefix.is_ok(), "Prefix parse failed: {:?}", prefix);
-    let prefix = prefix.unwrap();
-    
-    let obj = prefix.eval(env);
-    assert!(obj.is_ok(), "Prefix eval failed: {:?}", obj);
-    let obj = obj.unwrap();
+        assert_eq!(obj, Object::Bool(false));
+    }
 
-    assert_eq!(obj, Object::Real(-5.0));
+    #[test]
+    fn minus_prefix() {
+        let source = "-5;";
+        let env = Container::new(Env::new());
+
+        let mut lexer = Lexer::new(String::from(source));
+        lexer.next();
+
+        let prefix = Prefix::parse(&mut lexer);
+        assert!(prefix.is_ok(), "Prefix parse failed: {:?}", prefix);
+        let prefix = prefix.unwrap();
+        
+        let obj = prefix.eval(env);
+        assert!(obj.is_ok(), "Prefix eval failed: {:?}", obj);
+        let obj = obj.unwrap();
+
+        assert_eq!(obj, Object::Real(-5.0));
+    }
 }

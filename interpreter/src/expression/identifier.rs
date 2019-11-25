@@ -14,7 +14,7 @@ use crate::error::ParseError;
 
 /// Identifier
 /// 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Identifier {
     pub name: String
 }
@@ -49,7 +49,58 @@ impl EvalTrait for Identifier {
     }
 }
 
-#[test]
-fn ident() {
-    unimplemented!()
+#[cfg(test)]
+mod ident_tests {
+    use crate::Object;
+    use crate::Container;
+    use crate::Env;
+    use crate::Lexer;
+
+    use crate::traits::LexerTrait;
+    use crate::traits::ParseTrait;
+    use crate::traits::EvalTrait;
+    use crate::traits::NamespaceTrait;
+
+    use super::Identifier;
+
+    #[test]
+    fn ident() {
+        let source = "a;";
+        let env = Container::new(Env::new());
+        env.get_mut().set("a", Object::Bool(true));
+
+        let mut lexer = Lexer::new(String::from(source));
+        lexer.next();
+
+        let ident = Identifier::parse(&mut lexer);
+        assert!(ident.is_ok(), "Identifier parse failed: {:?}", ident);
+        let ident = ident.unwrap();
+
+        let ast = Identifier::new(String::from("a"));
+        assert_eq!(ident, ast);
+        
+        let obj = ident.eval(env);
+        assert!(obj.is_ok(), "Identifier eval failed: {:?}", obj);
+        let obj = obj.unwrap();
+
+        assert_eq!(obj, Object::Bool(true));
+    }
+    
+    #[test]
+    fn ident_error() {
+        let source = "a;";
+        let env = Container::new(Env::new());
+
+        let mut lexer = Lexer::new(String::from(source));
+        lexer.next();
+
+        let ident = Identifier::parse(&mut lexer);
+        assert!(ident.is_ok(), "Identifier parse failed: {:?}", ident);
+        let ident = ident.unwrap();
+        
+        let obj = ident.eval(env);
+        assert!(obj.is_err(), "Identifier eval should failed: {:?}", obj);
+    }
 }
+
+

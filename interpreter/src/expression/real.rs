@@ -13,7 +13,7 @@ use crate::error::ParseError;
 
 /// Real
 /// 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Real {
     pub number: f64
 }
@@ -46,40 +46,54 @@ impl EvalTrait for Real {
     }
 }
 
-#[test]
-fn real_with_decimal() {
-    let source = "0.5;";
-    let env = Container::new(Env::new());
+#[cfg(test)]
+mod real_tests {
+    use crate::Object;
+    use crate::Container;
+    use crate::Env;
+    use crate::Lexer;
 
-    let mut lexer = Lexer::new(String::from(source));
-    lexer.next();
+    use crate::traits::LexerTrait;
+    use crate::traits::ParseTrait;
+    use crate::traits::EvalTrait;
 
-    let real = Real::parse(&mut lexer);
-    assert!(real.is_ok(), "Real parse failed: {:?}", real);
-    let real = real.unwrap();
-    
-    let obj = real.eval(env);
-    assert!(obj.is_ok(), "Real eval failed: {:?}", obj);
-    let obj = obj.unwrap();
+    use super::Real;
 
-    assert_eq!(obj, Object::Real(0.5));
-}
+    #[test]
+    fn real_with_decimal() {
+        let source = "0.5;";
+        let env = Container::new(Env::new());
 
-#[test]
-fn real_without_decimal() {
-    let source = "5;";
-    let env = Container::new(Env::new());
+        let mut lexer = Lexer::new(String::from(source));
+        lexer.next();
 
-    let mut lexer = Lexer::new(String::from(source));
-    lexer.next();
+        let real = Real::parse(&mut lexer);
+        assert!(real.is_ok(), "Real parse failed: {:?}", real);
+        let real = real.unwrap();
+        
+        let obj = real.eval(env);
+        assert!(obj.is_ok(), "Real eval failed: {:?}", obj);
+        let obj = obj.unwrap();
 
-    let real = Real::parse(&mut lexer);
-    assert!(real.is_ok(), "Real parse failed: {:?}", real);
-    let real = real.unwrap();
-    
-    let obj = real.eval(env);
-    assert!(obj.is_ok(), "Real eval failed: {:?}", obj);
-    let obj = obj.unwrap();
+        assert_eq!(obj, Object::Real(0.5));
+    }
 
-    assert_eq!(obj, Object::Real(5.0));
+    #[test]
+    fn real_without_decimal() {
+        let source = "5;";
+        let env = Container::new(Env::new());
+
+        let mut lexer = Lexer::new(String::from(source));
+        lexer.next();
+
+        let real = Real::parse(&mut lexer);
+        assert!(real.is_ok(), "Real parse failed: {:?}", real);
+        let real = real.unwrap();
+        
+        let obj = real.eval(env);
+        assert!(obj.is_ok(), "Real eval failed: {:?}", obj);
+        let obj = obj.unwrap();
+
+        assert_eq!(obj, Object::Real(5.0));
+    }
 }

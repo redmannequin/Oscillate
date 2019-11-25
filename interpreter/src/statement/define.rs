@@ -14,7 +14,7 @@ use crate::expression::Identifier;
 
 /// Define
 /// 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Define {
     name: Identifier,
     body: Vec<Expression>
@@ -50,7 +50,7 @@ impl ParseTrait for Define {
     }
 }
 
-#[test]
-fn define_statement() {
-    unimplemented!()
-}
+// #[test]
+// fn define_statement() {
+//     unimplemented!()
+// }

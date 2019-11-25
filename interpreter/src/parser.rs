@@ -65,7 +65,7 @@ pub fn on_semicolon(lexer: &mut Lexer) -> Result<()> {
     }
 }
 
-#[test]
-fn parser() {
-    unimplemented!()
-}
+// #[test]
+// fn parser() {
+//     unimplemented!()
+// }

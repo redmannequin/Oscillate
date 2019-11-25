@@ -50,5 +50,12 @@ impl<O> NamespaceTrait<O> for Env<O> {
 
 #[test]
 fn env() {
-    unimplemented!()
+    use crate::Object;
+    
+    let mut env = Env::new();
+    env.set("test", Object::Bool(true));
+    let obj = env.get("test");
+    assert!(env.get("test").is_some());
+    let obj = obj.unwrap();
+    assert_eq!(*obj.get(), Object::Bool(true));
 }

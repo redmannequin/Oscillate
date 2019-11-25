@@ -3,7 +3,7 @@ use crate::Result;
 
 use crate::traits::ParseTrait;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Set {}
 
 impl Set {
@@ -18,7 +18,7 @@ impl ParseTrait for Set {
     }
 }
 
-#[test]
-fn set_statement() {
-    unimplemented!()
-}
+// #[test]
+// fn set_statement() {
+//     unimplemented!()
+// }

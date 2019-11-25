@@ -17,7 +17,7 @@ use crate::Result;
 
 /// Assign
 /// 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Assign {
     pub ident: Identifier,
     pub value: Box<Expression>
@@ -62,21 +62,46 @@ impl EvalTrait for Assign {
     }
 }
 
-#[test]
-fn assign() {
-    let source = "a:5;";
-    let env = Container::new(Env::new());
+#[cfg(test)]
+mod assign_tests {
+    use crate::Object;
+    use crate::Container;
+    use crate::Env;
+    use crate::Lexer;
 
-    let mut lexer = Lexer::new(String::from(source));
-    lexer.next();
+    use crate::traits::LexerTrait;
+    use crate::traits::ParseTrait;
+    use crate::traits::EvalTrait;
 
-    let assign = Assign::parse(&mut lexer);
-    assert!(assign.is_ok(), "Assign parse failed: {:?}", assign);
-    let assign = assign.unwrap();
-    
-    let obj = assign.eval(env);
-    assert!(obj.is_ok(), "Assign eval failed: {:?}", obj);
-    let obj = obj.unwrap();
+    use crate::expression::Real;
+    use crate::expression::Identifier;
+    use crate::expression::Expression;
 
-    assert_eq!(obj, Object::Real(5.0));
+    use super::Assign;
+
+    #[test]
+    fn assign() {
+        let source = "a:5;";
+        let env = Container::new(Env::new());
+
+        let mut lexer = Lexer::new(String::from(source));
+        lexer.next();
+
+        let assign = Assign::parse(&mut lexer);
+        assert!(assign.is_ok(), "Assign parse failed: {:?}", assign);
+        let assign = assign.unwrap();
+
+        let ast = Assign::new(
+            Identifier::new(String::from("a")), 
+            Expression::Real(Real::new(5.0))
+        );
+
+        assert_eq!(assign, ast);
+        
+        let obj = assign.eval(env);
+        assert!(obj.is_ok(), "Assign eval failed: {:?}", obj);
+        let obj = obj.unwrap();
+
+        assert_eq!(obj, Object::Real(5.0));
+    }
 }

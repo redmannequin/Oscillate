@@ -185,7 +185,7 @@ impl LexerTrait for Lexer {
     }
 }
 
-#[test]
-fn lexer() {
-    unimplemented!()
-}
+// #[test]
+// fn lexer() {
+//     unimplemented!()
+// }
