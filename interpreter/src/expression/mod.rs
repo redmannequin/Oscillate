@@ -11,6 +11,9 @@ use crate::traits::EvalTrait;
 use crate::Result;
 use crate::error::ParseError;
 
+mod array;
+pub use array::Array;
+
 mod assign;
 pub use assign::Assign;
 
@@ -40,6 +43,7 @@ pub use real::Real;
 /// 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Expression {
+    Array(Array),
     Assign(Assign),
     Bool(Bool),
     Identifier(Identifier),
@@ -52,15 +56,9 @@ pub enum Expression {
 
 impl Expression {
 
-    fn parse_identifier(lexer: &mut Lexer) -> Result<Self> {
-        let ident = Identifier::parse(lexer)?;
-        let exp = Expression::Identifier(ident);
-        Ok(exp)
-    } 
-
-    fn parse_real(lexer: &mut Lexer) -> Result<Self> {
-        let real = Real::parse(lexer)?;
-        let exp = Expression::Real(real);
+    fn parse_array(lexer: &mut Lexer) -> Result<Self> {
+        let array = Array::parse(lexer)?;
+        let exp = Expression::Array(array);
         Ok(exp)
     }
 
@@ -76,6 +74,12 @@ impl Expression {
         Ok(exp)
     }
 
+    fn parse_identifier(lexer: &mut Lexer) -> Result<Self> {
+        let ident = Identifier::parse(lexer)?;
+        let exp = Expression::Identifier(ident);
+        Ok(exp)
+    } 
+
     fn parse_if(lexer: &mut Lexer) -> Result<Self> {
         let if_e = If::parse(lexer)?;
         let exp = Expression::If(if_e);
@@ -85,6 +89,12 @@ impl Expression {
     fn parse_prefix(lexer: &mut Lexer) -> Result<Self> {
         let prefix = Prefix::parse(lexer)?;
         let exp = Expression::Prefix(prefix);
+        Ok(exp)
+    }
+
+    fn parse_real(lexer: &mut Lexer) -> Result<Self> {
+        let real = Real::parse(lexer)?;
+        let exp = Expression::Real(real);
         Ok(exp)
     }
 
@@ -101,6 +111,7 @@ impl Expression {
             TokenType::If => Self::parse_if(lexer)?,
             TokenType::Not => Self::parse_prefix(lexer)?,
             TokenType::Minus => Self::parse_prefix(lexer)?,
+            TokenType::OpenSquareBracket => Self::parse_array(lexer)?,
             _ => return Err(ParseError::ExpectedExpression(tok.clone()))
         };
         Ok(left_exp)
@@ -147,13 +158,14 @@ impl EvalTrait for Expression {
 
     fn eval(&self, env: Container<Self::Namespace>) -> Result<Object> {
         match self {
+            Expression::Array(array) => array.eval(env),
             Expression::Assign(assign) => assign.eval(env),
-            Expression::Real(num) => num.eval(env),
-            Expression::Prefix(prefix) => prefix.eval(env),
-            Expression::Identifier(ident) => ident.eval(env),
-            Expression::Infix(infix) => infix.eval(env),
             Expression::Bool(bool_exp) => bool_exp.eval(env),
+            Expression::Identifier(ident) => ident.eval(env),
             Expression::If(if_exp) => if_exp.eval(env),
+            Expression::Infix(infix) => infix.eval(env),
+            Expression::Prefix(prefix) => prefix.eval(env),
+            Expression::Real(num) => num.eval(env),
             Expression::Null => Ok(Object::Null)
         }
     }

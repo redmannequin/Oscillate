@@ -2,6 +2,7 @@
 /// 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Object {
+    Array(Vec<Object>),
     Bool(bool),
     Real(f64),
     Null
