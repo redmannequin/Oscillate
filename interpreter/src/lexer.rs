@@ -125,7 +125,7 @@ impl Lexer {
         }
 
         match identifier.as_str() {
-            "define" => self.create_token(TokenType::Define),
+            "mod" => self.create_token(TokenType::Mod),
             "fn" => self.create_token(TokenType::Function),
 
             "true" => self.create_token(TokenType::True),
@@ -136,6 +136,13 @@ impl Lexer {
             "return" => self.create_token(TokenType::Return),
 
             "use" => self.create_token(TokenType::Use),
+
+            "RUN" => self.create_token(TokenType::Run),
+            "INPUT" => self.create_token(TokenType::Input),
+            "Default" => self.create_token(TokenType::DefaultValue),
+            "OUTPUT" => self.create_token(TokenType::Output),
+            "OUTPUT_CH_1" => self.create_token(TokenType::OutputCh1),
+            "OUTPUT_CH_2" => self.create_token(TokenType::OutputCh2),
 
             _ => self.create_token(TokenType::Identifier(identifier))
         }

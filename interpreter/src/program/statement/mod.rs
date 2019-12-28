@@ -1,6 +1,9 @@
 
+mod block;
+pub use block::Block;
+
 mod define;
-pub use define::Define;
+pub use define::Mod;
 
 mod set_stmt;
 pub use set_stmt::Set;
@@ -12,24 +15,24 @@ use crate::Lexer;
 use crate::TokenType;
 use crate::Object;
 use crate::Container;
-use crate::Env;
 
 use crate::parser::expect_curr;
 
 use crate::traits::ParseTrait;
 use crate::traits::EvalTrait;
 use crate::traits::LexerTrait;
+use crate::traits::NamespaceTrait;
 
 use crate::Result;
 use crate::error::ParseError;
 
-use crate::expression::Expression;
+use crate::program::expression::Expression;
 
 /// Statemnet
 /// 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Statement {
-    Define(Define),
+    Mod(Mod),
     Set(Set),
     Use(Use),
     Expression(Expression),
@@ -46,7 +49,7 @@ impl Statement {
             let stmt = match tok {
                 TokenType::Use => Self::parse_use(lexer)?,
                 TokenType::Set => Self::parse_set(lexer)?,
-                TokenType::Define => Self::parse_define(lexer)?,
+                TokenType::Mod => Self::parse_mod(lexer)?,
                 TokenType::CloseCurlyBracket => break,
                 _ => Self::parse_expression(lexer)?
             };
@@ -55,9 +58,9 @@ impl Statement {
         Ok(block)
     }
 
-    fn parse_define(lexer: &mut Lexer) -> Result<Self> {
-        let define = Define::parse(lexer)?;
-        let stmt = Statement::Define(define);
+    fn parse_mod(lexer: &mut Lexer) -> Result<Self> {
+        let define = Mod::parse(lexer)?;
+        let stmt = Statement::Mod(define);
         Ok(stmt)
     }
 
@@ -91,7 +94,7 @@ impl ParseTrait for Statement {
         match tok {
             TokenType::Use => Self::parse_use(lexer),
             TokenType::Set => Self::parse_set(lexer),
-            TokenType::Define => Self::parse_define(lexer),
+            TokenType::Mod => Self::parse_mod(lexer),
             _ => Self::parse_expression(lexer)
         }
     }
@@ -99,13 +102,11 @@ impl ParseTrait for Statement {
 
 /// Statement Eval
 ///  
-impl EvalTrait for Statement {
-    type Object = Object;
-    type Namespace = Env<Object>;
+impl EvalTrait<Object> for Statement {
 
-    fn eval(&self, env: Container<Self::Namespace>) -> Result<Object> {
+    fn eval(&self, env: Container<impl NamespaceTrait<Object>>) -> Result<Object> {
         match self {
-            Statement::Define(_) => Err(ParseError::Ops),
+            Statement::Mod(_) => Err(ParseError::Ops),
             Statement::Set(_) => Err(ParseError::Ops),
             Statement::Use(_) => Err(ParseError::Ops),
             Statement::Expression(exp) => exp.eval(env)

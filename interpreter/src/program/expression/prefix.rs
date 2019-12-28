@@ -2,16 +2,16 @@ use crate::Lexer;
 use crate::TokenType;
 use crate::Object;
 use crate::Container;
-use crate::Env;
 
 use crate::traits::LexerTrait;
 use crate::traits::ParseTrait;
 use crate::traits::EvalTrait;
+use crate::traits::NamespaceTrait;
 
 use crate::Result;
 use crate::error::ParseError;
 
-use crate::expression::Expression;
+use crate::program::expression::Expression;
 
 /// PrefixType
 /// 
@@ -55,11 +55,9 @@ impl ParseTrait for Prefix {
     }
 }
 
-impl EvalTrait for Prefix {
-    type Object = Object;
-    type Namespace = Env<Object>;
-
-    fn eval(&self, env: Container<Self::Namespace>) -> Result<Object> {
+impl EvalTrait<Object> for Prefix {
+    
+    fn eval(&self, env: Container<impl NamespaceTrait<Object>>) -> Result<Object> {
         let obj = Expression::eval(self.expression.as_ref(), env)?;
         match self.prefix {
             PrefixType::Not => Ok(Object::Bool(!obj.is_true())),

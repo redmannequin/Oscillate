@@ -5,7 +5,7 @@ use std::cell::RefCell;
 
 /// # Container
 /// 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Container<T>(Rc<RefCell<T>>);
 
 impl<T> Container<T> {

@@ -1,7 +1,6 @@
 use crate::Lexer;
 use crate::Object;
 use crate::Container;
-use crate::Env;
 
 use crate::parser::on_semicolon;
 
@@ -10,8 +9,8 @@ use crate::traits::ParseTrait;
 use crate::traits::EvalTrait;
 use crate::traits::NamespaceTrait;
 
-use crate::expression::Identifier;
-use crate::expression::Expression;
+use crate::program::expression::Identifier;
+use crate::program::expression::Expression;
 
 use crate::Result;
 
@@ -51,11 +50,9 @@ impl ParseTrait for Assign {
     }
 }
 
-impl EvalTrait for Assign {
-    type Object = Object;
-    type Namespace = Env<Object>;
-
-    fn eval(&self, env: Container<Self::Namespace>) -> Result<Object> {
+impl EvalTrait<Object> for Assign {
+    
+    fn eval(&self, env: Container<impl NamespaceTrait<Object>>) -> Result<Object> {
         let result = self.value.eval(env.clone())?;
         env.get_mut().set(self.ident.name.as_ref(), result.clone());
         Ok(result)
@@ -73,9 +70,9 @@ mod assign_tests {
     use crate::traits::ParseTrait;
     use crate::traits::EvalTrait;
 
-    use crate::expression::Real;
-    use crate::expression::Identifier;
-    use crate::expression::Expression;
+    use crate::program::expression::Real;
+    use crate::program::expression::Identifier;
+    use crate::program::expression::Expression;
 
     use super::Assign;
 

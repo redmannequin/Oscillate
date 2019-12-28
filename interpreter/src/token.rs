@@ -49,7 +49,7 @@ pub enum TokenType {
 
     // Keywords
     Function,
-    Define,
+    Mod,
 
     True,
     False,
@@ -58,7 +58,15 @@ pub enum TokenType {
     Return,
 
     Use,
-    Set
+    Set,
+
+    Run,
+    Input,
+    DefaultValue,
+    Output,
+    OutputCh1,
+    OutputCh2,
+
 }
 
 /// Token

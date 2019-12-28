@@ -1,7 +1,10 @@
+use crate::Env;
+use crate::Container;
 /// Object
 /// 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Object {
+    Func(Vec<String>, Container<Env<Object>>),
     Array(Vec<Object>),
     Bool(bool),
     Real(f64),
@@ -18,4 +21,10 @@ impl Object {
         }
     }
     
+}
+
+impl From<f64> for Object {
+    fn from(item: f64) -> Self {
+        Object::Real(item)
+    }
 }

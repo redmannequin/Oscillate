@@ -1,12 +1,11 @@
 use crate::Lexer;
 use crate::TokenType;
-use crate::Object;
 use crate::Container;
-use crate::Env;
 
 use crate::traits::LexerTrait;
 use crate::traits::ParseTrait;
 use crate::traits::EvalTrait;
+use crate::traits::NamespaceTrait;
 
 use crate::Result;
 use crate::error::ParseError;
@@ -36,13 +35,9 @@ impl ParseTrait for Real {
     }
 }
 
-impl EvalTrait for Real {
-    type Object = Object;
-    type Namespace = Env<Object>;
-
-    fn eval(&self, _env: Container<Self::Namespace>) -> Result<Object> {
-        let obj = Object::Real(self.number);
-        Ok(obj)
+impl<O> EvalTrait<O> for Real where O: From<f64> + Clone {
+    fn eval(&self, _env: Container<impl NamespaceTrait<O>>) -> Result<O> {
+        Ok(self.number.into())
     }
 }
 
@@ -62,7 +57,7 @@ mod real_tests {
     #[test]
     fn real_with_decimal() {
         let source = "0.5;";
-        let env = Container::new(Env::new());
+        let env: Container<Env<Object>> = Container::new(Env::new());
 
         let mut lexer = Lexer::new(String::from(source));
         lexer.next();
@@ -81,7 +76,7 @@ mod real_tests {
     #[test]
     fn real_without_decimal() {
         let source = "5;";
-        let env = Container::new(Env::new());
+        let env: Container<Env<Object>> = Container::new(Env::new());
 
         let mut lexer = Lexer::new(String::from(source));
         lexer.next();

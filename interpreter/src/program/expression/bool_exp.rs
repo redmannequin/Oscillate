@@ -2,11 +2,11 @@ use crate::Lexer;
 use crate::TokenType;
 use crate::Object;
 use crate::Container;
-use crate::Env;
 
 use crate::traits::LexerTrait;
 use crate::traits::ParseTrait;
 use crate::traits::EvalTrait;
+use crate::traits::NamespaceTrait;
 
 use crate::Result;
 use crate::error::ParseError;
@@ -35,11 +35,9 @@ impl ParseTrait for Bool {
     }
 }
 
-impl EvalTrait for Bool {
-    type Object = Object;
-    type Namespace = Env<Object>;
+impl EvalTrait<Object> for Bool {
 
-    fn eval(&self, _env: Container<Self::Namespace>) -> Result<Object> {
+    fn eval(&self, _env: Container<impl NamespaceTrait<Object>>) -> Result<Object> {
         Ok(Object::Bool(self.value))
     }
 }

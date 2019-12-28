@@ -2,10 +2,12 @@ use crate::Env;
 use crate::Object;
 
 use crate::Lexer;
-use crate::Parser;
 use crate::Container;
 
+use crate::traits::ParseTrait;
 use crate::traits::EvalTrait;
+
+use crate::Program;
 
 use crate::Result;
 
@@ -23,14 +25,9 @@ impl Evaluator {
     }
 
     pub fn eval(&self, source: String) -> Result<Object> {
-        let lexer = Lexer::new(source);
-        let mut parser = Parser::new(lexer);
-        let program = parser.parse()?;
-
-        let mut result = Object::Null;
-        for statement in program {
-            result = statement.eval(self.env.clone())?;
-        }
+        let mut lexer = Lexer::new(source);
+        let program = Program::parse(&mut lexer)?;
+        let result = program.eval(self.env.clone())?;
         Ok(result)
     }
 }

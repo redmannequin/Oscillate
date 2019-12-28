@@ -2,7 +2,6 @@ use crate::Lexer;
 use crate::TokenType;
 use crate::Object;
 use crate::Container;
-use crate::Env;
 
 use crate::traits::LexerTrait;
 use crate::traits::ParseTrait;
@@ -37,11 +36,9 @@ impl ParseTrait for Identifier {
     }
 }
 
-impl EvalTrait for Identifier {
-    type Object = Object;
-    type Namespace = Env<Object>;
-
-    fn eval(&self, env: Container<Self::Namespace>) -> Result<Object> {
+impl EvalTrait<Object> for Identifier {
+    
+    fn eval(&self, env: Container<impl NamespaceTrait<Object>>) -> Result<Object> {
         if let Some(obj) = env.get().get(self.name.as_ref()) {
             return Ok(obj.get().clone());
         }

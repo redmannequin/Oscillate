@@ -2,19 +2,19 @@ use crate::Lexer;
 use crate::TokenType;
 use crate::Object;
 use crate::Container;
-use crate::Env;
 
 use crate::parser::expect_peek;
 
 use crate::traits::LexerTrait;
 use crate::traits::ParseTrait;
 use crate::traits::EvalTrait;
+use crate::traits::NamespaceTrait;
 
 use crate::Result;
 use crate::error::ParseError;
 
-use crate::expression::Expression;
-use crate::statement::Statement;
+use crate::program::expression::Expression;
+use crate::program::statement::Statement;
 
 /// Cond Block
 /// 
@@ -94,11 +94,9 @@ impl ParseTrait for If {
     }
 }
 
-impl EvalTrait for If {
-    type Object = Object;
-    type Namespace = Env<Object>;
+impl EvalTrait<Object> for If {
 
-    fn eval(&self, env: Container<Self::Namespace>) -> Result<Object> {
+    fn eval(&self, env: Container<impl NamespaceTrait<Object>>) -> Result<Object> {
         let mut result = Object::Null;
         for cond_block in self.cond_blocks.iter() {
             let cond = cond_block.cond.eval(env.clone())?;
@@ -132,11 +130,11 @@ mod if_tests {
     use crate::traits::ParseTrait;
     use crate::traits::EvalTrait;
 
-    use crate::expression::Bool;
-    use crate::expression::Real;
-    use crate::expression::Expression;
+    use crate::program::expression::Bool;
+    use crate::program::expression::Real;
+    use crate::program::expression::Expression;
 
-    use crate::statement::Statement;
+    use crate::program::statement::Statement;
 
     use super::If;
     use super::CondBlock;

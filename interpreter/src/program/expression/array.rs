@@ -1,14 +1,14 @@
 use crate::Lexer;
 use crate::TokenType;
 use crate::Object;
-use crate::Container;
-use crate::Env;
 
 use crate::traits::LexerTrait;
 use crate::traits::ParseTrait;
 use crate::traits::EvalTrait;
+use crate::traits::NamespaceTrait;
+use crate::Container;
 
-use crate::expression::Expression;
+use crate::program::expression::Expression;
 
 use crate::Result;
 use crate::error::ParseError;
@@ -52,11 +52,9 @@ impl ParseTrait for Array {
     }
 }
 
-impl EvalTrait for Array {
-    type Object = Object;
-    type Namespace = Env<Object>;
-
-    fn eval(&self, env: Container<Self::Namespace>) -> Result<Object> {
+impl EvalTrait<Object> for Array {
+   
+    fn eval(&self, env: Container<impl NamespaceTrait<Object>>) -> Result<Object> {
         let mut arr = Vec::new();
         for item in self.value.iter() {
             let item = item.eval(env.clone())?;
@@ -69,18 +67,18 @@ impl EvalTrait for Array {
 #[cfg(test)]
 mod array_tests {
     use crate::Object;
-    use crate::Container;
     use crate::Env;
     use crate::Lexer;
 
     use crate::traits::LexerTrait;
     use crate::traits::ParseTrait;
     use crate::traits::EvalTrait;
+    use crate::Container;
 
     use super::Array;
 
-    use crate::expression::Real;
-    use crate::expression::Expression;
+    use crate::program::expression::Real;
+    use crate::program::expression::Expression;
 
     #[test]
     fn array() {

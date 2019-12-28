@@ -5,7 +5,7 @@ use crate::traits::NamespaceTrait;
 
 /// Env
 /// 
-#[derive(Debug, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Env<O> {
     store: HashMap<String, Container<O>>,
     outer: Option<Container<Env<O>>>
@@ -20,7 +20,7 @@ impl<O> Env<O> {
     }
 }
 
-impl<O> NamespaceTrait<O> for Env<O> {
+impl<O> NamespaceTrait<O> for Env<O> where O: Clone {
 
     fn get(&self, name: &str) -> Option<Container<O>> {
         match self.store.get(name) {

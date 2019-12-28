@@ -2,11 +2,11 @@ use crate::Lexer;
 use crate::Object;
 use crate::TokenType;
 use crate::Container;
-use crate::Env;
 
 use crate::traits::LexerTrait;
 use crate::traits::ParseTrait;
 use crate::traits::EvalTrait;
+use crate::traits::NamespaceTrait;
 
 use crate::Result;
 use crate::error::ParseError;
@@ -19,6 +19,9 @@ pub use assign::Assign;
 
 mod bool_exp;
 pub use bool_exp::Bool;
+
+mod func;
+pub use func::Func;
 
 mod identifier;
 pub use identifier::Identifier;
@@ -152,11 +155,9 @@ impl ParseTrait for Expression {
     }
 }
 
-impl EvalTrait for Expression {
-    type Object = Object;
-    type Namespace = Env<Object>;
-
-    fn eval(&self, env: Container<Self::Namespace>) -> Result<Object> {
+impl EvalTrait<Object> for Expression {
+    
+    fn eval(&self, env: Container<impl NamespaceTrait<Object>>) -> Result<Object> {
         match self {
             Expression::Array(array) => array.eval(env),
             Expression::Assign(assign) => assign.eval(env),

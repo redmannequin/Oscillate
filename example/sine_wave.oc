@@ -1,0 +1,23 @@
+use core::math;
+use core::master;
+
+fn sine(t, freq, phase: 0, vol: 0) {
+    return vol*math::sin(2*PI*freq*t);
+}
+
+mod SineGen {
+  t: PARAM::Default(0);
+  f: PARAM::Default(440);
+  a: Sine { t: self::t; freq: self::f };
+  
+  RUN { self::t += 1; }
+
+  OUTPUT [ self::a::OUTPUT[0] ];
+}
+
+
+let a = SineGen{ t: 50 };
+
+master [
+    { in: a, vol: 0, channels:[1,2], mute: false }
+]

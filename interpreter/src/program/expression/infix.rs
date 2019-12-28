@@ -3,16 +3,16 @@ use crate::Token;
 use crate::TokenType;
 use crate::Object;
 use crate::Container;
-use crate::Env;
 
 use crate::traits::LexerTrait;
 use crate::traits::ParseTrait;
 use crate::traits::EvalTrait;
+use crate::traits::NamespaceTrait;
 
 use crate::Result;
 use crate::error::ParseError;
 
-use crate::expression::Expression;
+use crate::program::expression::Expression;
 
 /// Precedence
 /// 
@@ -115,11 +115,9 @@ impl Infix {
     }
 }
 
-impl EvalTrait for Infix {
-    type Object = Object;
-    type Namespace = Env<Object>;
-
-    fn eval(&self, env: Container<Self::Namespace>) -> Result<Object> {
+impl EvalTrait<Object> for Infix {
+    
+    fn eval(&self, env: Container<impl NamespaceTrait<Object>>) -> Result<Object> {
         let left_obj = Expression::eval(self.left_exp.as_ref(), env.clone())?;
         let right_obj = Expression::eval(self.right_exp.as_ref(), env.clone())?;
 
@@ -146,7 +144,7 @@ mod infix_tests {
     use crate::traits::ParseTrait;
     use crate::traits::EvalTrait;
 
-    use crate::expression::Expression;
+    use crate::program::expression::Expression;
 
     use super::Infix;
     use super::InfixType;
@@ -168,7 +166,7 @@ mod infix_tests {
 
     #[test]
     fn equal_infix() {
-        use crate::expression::Real;
+        use crate::program::expression::Real;
         let env = Container::new(Env::new());
 
         let infix = (Some(InfixEnum::Equal), Precedence::Equals);
@@ -185,7 +183,7 @@ mod infix_tests {
 
     #[test]
     fn not_equal_infix() {
-        use crate::expression::Real;
+        use crate::program::expression::Real;
         let env = Container::new(Env::new());
 
         let infix = (Some(InfixEnum::NotEqual), Precedence::Equals);
@@ -202,7 +200,7 @@ mod infix_tests {
 
     #[test]
     fn less_than_infix() {
-        use crate::expression::Real;
+        use crate::program::expression::Real;
         let env = Container::new(Env::new());
 
         let infix = (Some(InfixEnum::LessThan), Precedence::LessGreater);
@@ -219,7 +217,7 @@ mod infix_tests {
 
     #[test]
     fn grater_than_infix() {
-        use crate::expression::Real;
+        use crate::program::expression::Real;
         let env = Container::new(Env::new());
 
         let infix = (Some(InfixEnum::GraterThan), Precedence::LessGreater);
@@ -236,7 +234,7 @@ mod infix_tests {
 
     #[test]
     fn plus_infix() {
-        use crate::expression::Real;
+        use crate::program::expression::Real;
         let env = Container::new(Env::new());
 
         let infix = (Some(InfixEnum::Plus), Precedence::Sum);
@@ -253,7 +251,7 @@ mod infix_tests {
 
     #[test]
     fn minus_infix() {
-        use crate::expression::Real;
+        use crate::program::expression::Real;
         let env = Container::new(Env::new());
 
         let infix = (Some(InfixEnum::Minus), Precedence::Sum);
@@ -270,7 +268,7 @@ mod infix_tests {
 
     #[test]
     fn star_infix() {
-        use crate::expression::Real;
+        use crate::program::expression::Real;
         let env = Container::new(Env::new());
 
         let infix = (Some(InfixEnum::Star), Precedence::Product);
@@ -287,7 +285,7 @@ mod infix_tests {
 
     #[test]
     fn divide_infix() {
-        use crate::expression::Real;
+        use crate::program::expression::Real;
         let env = Container::new(Env::new());
 
         let infix = (Some(InfixEnum::Divide), Precedence::Product);

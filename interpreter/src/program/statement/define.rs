@@ -9,18 +9,43 @@ use crate::error::ParseError;
 use crate::traits::ParseTrait;
 use crate::traits::LexerTrait;
 
-use crate::expression::Expression;
-use crate::expression::Identifier;
+use crate::program::expression::Expression;
+use crate::program::expression::Identifier;
 
 /// Define
 /// 
+/// mod Sine {
+///   t: INPUT;
+///   freq: INPUT;
+///   phase: INPUT::Default(0);
+///   vol: INPUT::Default(0);
+/// 
+///   OUTPUT [ self::vol*math::sin(2*PI*self::freq*self::t) ];
+/// }
+/// 
+/// mod SineGen {
+///   t: PARAM::Default(0);
+///   f: PARAM::Default(440);
+///   a: Sine { t: self::t; freq: self::f };
+///   
+///   RUN { self::t += 1; }
+/// 
+///   OUTPUT [ self::a::OUTPUT[0] ];
+///   OUTPUT_CH_1(self::OUTPUT[0]);
+///   OUTPUT_CH_2(self::OUTPUT[0]);
+/// }
+/// 
+/// 
+/// 
+///
+/// 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Define {
+pub struct Mod {
     name: Identifier,
     body: Vec<Expression>
 }
 
-impl Define {
+impl Mod {
     pub fn new(name: Identifier, body: Vec<Expression>) -> Self {
         Self { name, body }
     }
@@ -30,7 +55,7 @@ impl Define {
     pub fn get_body(&self) -> &Vec<Expression> { &self.body }
 }
 
-impl ParseTrait for Define {
+impl ParseTrait for Mod {
     type Lexer = Lexer;
 
     fn parse(lexer: &mut Self::Lexer) -> Result<Self> {
@@ -46,7 +71,7 @@ impl ParseTrait for Define {
             body.push(Expression::parse(lexer)?)
         }
 
-        Ok(Define::new(name, body))
+        Ok(Mod::new(name, body))
     }
 }
 
@@ -54,3 +79,5 @@ impl ParseTrait for Define {
 // fn define_statement() {
 //     unimplemented!()
 // }
+
+

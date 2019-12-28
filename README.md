@@ -10,6 +10,8 @@ Use [cargo](https://www.rust-lang.org/tools/install) to build oscillate.
 ```bash
 cargo build --release
 ```
+## Data Types
+ 
 
 ## Basic Syntax Overview
 
@@ -39,15 +41,15 @@ fn name(p1,...,pn) {
   return;
 }
 ```
-* objects
+* module
 ```
-define name {
+mod name {
   ...
 }
 ```
 * example: A sine wave with a delay
 ```
-define Buffer {
+mod Buffer {
   size : PARAM(0);
   data: [size];
   count: 0;
@@ -84,7 +86,7 @@ define Buffer {
   }
 }
 
-define SizedFIFO {
+mod SizedFIFO {
     sig: INPUT,
     size: INPUT;
     data: Buffer { size; };
@@ -101,16 +103,16 @@ define SizedFIFO {
     OUTPUT { self.data.remove(0); }
 }
 
-define Sin {
+mod Sin {
     t: INPUT;
     freq: INPUT;
     phase: INPUT::Default(0);
     vol: INPUT::Default(0);
 
-    OUTPUT { self.vol*self.sin(2*PI*self.freq*self.t); }
+    OUTPUT { self.vol*self.sin((2*PI-self.phase)*self.freq*self.t); }
 }
 
-define Delay {
+mod Delay {
     sig: INPUT;
     time: INPUT::Default(1);
     buf: SizedFIFO { in: sig; size: time; };
@@ -126,11 +128,11 @@ define Delay {
     
 }
 
-define SoundA {
+mod SoundA {
     t: PARAM::Default(0);
-    note: INPUT::Default(Notes::A4) 
+    note: INPUT::Default(Notes::A4);
 
-    a: {
+    mod a {
         a1: Sin {
             t: self.t;
             freq: self.note;
