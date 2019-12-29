@@ -4,9 +4,6 @@
 mod container;
 pub use container::Container;
 
-mod env;
-pub use env::Env;
-
 pub mod error;
 pub use error::Result;
 
@@ -18,6 +15,7 @@ pub use lexer::Lexer;
 
 mod object;
 pub use object::Object;
+pub use object::Env;
 
 pub mod parser;
 
