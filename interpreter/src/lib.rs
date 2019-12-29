@@ -12,6 +12,8 @@ pub use evaluator::Evaluator;
 
 mod lexer;
 pub use lexer::Lexer;
+pub use lexer::Token;
+pub use lexer::TokenType;
 
 mod object;
 pub use object::Object;
@@ -22,8 +24,5 @@ pub mod parser;
 mod program;
 pub use program::Program;
 
-mod token;
-pub use token::Token;
-pub use token::TokenType;
 
 pub mod traits;

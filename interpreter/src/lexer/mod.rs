@@ -1,5 +1,7 @@
-use super::Token;
-use super::TokenType;
+
+mod token;
+pub use token::Token;
+pub use token::TokenType;
 
 use crate::traits::LexerTrait;
 
